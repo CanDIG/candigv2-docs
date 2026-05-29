@@ -148,7 +148,7 @@ This command creates a tar ball at `tmp/vault/backup.tar.gz`. This should be sav
 To restore the vault backup, copy the backup tarball into the vault directory in the CanDIG stack and rename it to `restore.tar.gz`:
 
 ```bash
-cp /path/to/backup.tar.gz path/to/CanDIGv2/lib/vault/restore.tar.gz
+cp /path/to/backup.tar.gz path/to/candigv2-docs/lib/vault/restore.tar.gz
 ```
 
 Then run
