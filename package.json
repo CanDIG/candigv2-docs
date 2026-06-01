@@ -31,6 +31,5 @@
     "@iconify-json/mdi": "^1.2.1",
     "patch-package": "^8.0.1"
   },
-  "overrides": {
-    "vite": "^7"}
+  "overrides": { "vite": "^7" }
 }
