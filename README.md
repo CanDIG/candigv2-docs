@@ -15,6 +15,22 @@ npm install
 npm run dev
 ```
 
+# How to make updates
+
+## If the update applies to both stable and develop versions
+
+e.g. fixing a typo, correcting a mistake, changing configurations
+
+Please make changes on both the develop and stable branches and create two PRs and request review before merging
+
+## If the update applies to the stable version only
+
+Please make a pull request against the stable branch only and request review before merging
+
+## If the update applies to the develop version only
+
+Please make a pull request against the develop branch only and request review before merging
+
 
 # Deployment info:
 
