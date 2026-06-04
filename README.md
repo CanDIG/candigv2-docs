@@ -2,7 +2,21 @@
 
 [![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
 
-Currently being deployed to https://candig.github.io/CanDIGv2/ via github actions.
+Currently being deployed to https://candig.github.io/candigv2-docs/ via github actions.
+
+Website is deployed from the Stable branch and should be up to date with changes being made on the stable branch of [CanDIGv2](https://github.com/CanDIG/CanDIGv2).
+
+We try to update docs inline with current development on the `develop` branch. They can be viewed in the `src/content/docs/` folder in markdown format, but not all nice ux features are properly displayed. 
+
+You can run a develop version of the docs website following the commands after checking out branch you are interested in building:
+
+```
+npm install
+npm run dev
+```
+
+
+# Deployment info:
 
 ## 🚀 Project Structure
 
@@ -40,7 +54,3 @@ All commands are run from the root of the project, from a terminal:
 | `npm run preview`         | Preview your build locally, before deploying     |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
