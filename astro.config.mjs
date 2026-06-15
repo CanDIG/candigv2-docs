@@ -4,6 +4,7 @@ import starlight from '@astrojs/starlight';
 import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi'
 import starlightUtils from "@lorenzo_lewis/starlight-utils";
 import starlightLinksValidator from 'starlight-links-validator';
+import tailwindcss from '@tailwindcss/vite';
 
 import icon from 'astro-icon';
 
@@ -13,12 +14,13 @@ import d2 from 'astro-d2';
 export default defineConfig({
     site: 'https://candig.github.io',
     base: 'candigv2-docs',
+    vite: {plugins: [tailwindcss()]},
     integrations: [
         d2({output: "d2"}),
         icon({
             include: {
             mdi: ["*"]
-        }
+        },
     }),
     starlight({
         title: 'Docs',
