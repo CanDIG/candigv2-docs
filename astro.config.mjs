@@ -166,6 +166,7 @@ export default defineConfig({
                         {label: 'Roles Overview', slug: 'user-roles/roles-overview'},
                         {label: 'Assign user roles', slug: 'user-roles/assign-roles'},
                         {label: 'DAC Authorization', slug: 'user-roles/dac-authorization'},
+                        {label: 'User Notifications', slug: 'user-roles/user-notifications'},
                     ]
                 }
             ]
