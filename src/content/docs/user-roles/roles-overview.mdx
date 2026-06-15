@@ -19,21 +19,60 @@ In CanDIG, there are five main user roles, from most privileged to least privile
 
 A summary of what each user role can do within a deployed CanDIG site is in the table below. The full technical breakdown of which endpoints each user can access is controlled through opa and is found in [`paths.json`](https://github.com/CanDIG/candig-opa/blob/develop/defaults/paths.json) 
 
-| Role                   | Register program                                 | Edit user auth                                      | Submit & delete data                                 | view donor data                                    | view agg. data                                |
-|------------------------|--------------------------------------------------|-----------------------------------------------------|----------------------------------------------------|----------------------------------------------------|-----------------------------------------------|
-| Site admin             | <Icon name="mdi:shield-check" color="green"/>    | <Icon name="mdi:shield-check" color="green"/>       | <Icon name="mdi:shield-check" color="green"/>      | <Icon name="mdi:shield-check" color="green"/>      | <Icon name="mdi:shield-check" color="green"/> |
-| Site curator           | <Icon name="mdi:shield-check" color="green"/>    | <Icon name="mdi:shield-check" color="green"/>       | <Icon name="mdi:shield-check" color="green"/>      | <Icon name="mdi:shield-check" color="green"/>      | <Icon name="mdi:shield-check" color="green"/> |
-| Program curator        | <Icon name="mdi:shield-off" color="red" />       | <Icon name="mdi:shield-half-full" color="orange"/>  | <Icon name="mdi:shield-half-full" color="orange"/> | <Icon name="mdi:shield-half-full" color="orange"/> | <Icon name="mdi:shield-check" color="green"/> |
-| Team member            | <Icon name="mdi:shield-off" color="red" />       | <Icon name="mdi:shield-off" color="red" />          | <Icon name="mdi:shield-off" color="red" />         | <Icon name="mdi:shield-half-full" color="orange"/> | <Icon name="mdi:shield-check" color="green"/> |
-| CanDIG Authorized User | <Icon name="mdi:shield-off" color="red" />       | <Icon name="mdi:shield-off" color="red" />          | <Icon name="mdi:shield-off" color="red" />         | <Icon name="mdi:shield-half-full" color="orange"/> | <Icon name="mdi:shield-check" color="green"/> |
-
-**Legend**
-
-|Icon                                               |Can perform action at a site? |
-|---------------------------------------------------|----------------------------------------------------------------------------------------------|
-|<Icon name="mdi:shield-check" color="green"/>      |Yes, for all data at a site|
-|<Icon name="mdi:shield-half-full" color="orange"/> |Yes, but only where the user has been specifically authorized for a particular program/dataset|
-|<Icon name="mdi:shield-off" color="red" />         |No.|
+<table>
+  <thead>
+    <tr>
+      <th>Role</th>
+      <th>Register program</th>
+      <th>Edit user auth</th>
+      <th>Submit &amp; delete data</th>
+      <th>View donor data</th>
+      <th>View agg. data</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Site admin</td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+    </tr>
+    <tr>
+      <td>Site curator</td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+    </tr>
+    <tr>
+      <td>Program curator</td>
+      <td><Icon name="mdi:shield-off" color="red"/></td>
+      <td><Icon name="mdi:shield-half-full" color="orange"/></td>
+      <td><Icon name="mdi:shield-half-full" color="orange"/></td>
+      <td><Icon name="mdi:shield-half-full" color="orange"/></td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+    </tr>
+    <tr>
+      <td>Team member</td>
+      <td><Icon name="mdi:shield-off" color="red"/></td>
+      <td><Icon name="mdi:shield-off" color="red"/></td>
+      <td><Icon name="mdi:shield-off" color="red"/></td>
+      <td><Icon name="mdi:shield-half-full" color="orange"/></td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+    </tr>
+    <tr>
+      <td>CanDIG Authorized User</td>
+      <td><Icon name="mdi:shield-off" color="red"/></td>
+      <td><Icon name="mdi:shield-off" color="red"/></td>
+      <td><Icon name="mdi:shield-off" color="red"/></td>
+      <td><Icon name="mdi:shield-half-full" color="orange"/></td>
+      <td><Icon name="mdi:shield-check" color="green"/></td>
+    </tr>
+  </tbody>
+</table>
 
 ## 1. Site admin
 
