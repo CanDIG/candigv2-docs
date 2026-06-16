@@ -1,0 +1,79 @@
+---
+title: User role notifications
+description: Methods to get notifications for pending users
+tableOfContents: true
+prev: false
+---
+
+import { Steps } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+CanDIG currently does not have an in-built way to notify sys admins when a user requests access and gets added to the pending users list.
+
+At UHN we use the following work around which creates a daily notification that posts to our Slack the current list of pending users.
+
+## How to setup Slack notification for pending users
+
+1. Create a Slack App in your Slack workspace by going to [https://api.slack.com/apps](https://api.slack.com/apps). You need to configure it so that you have an incoming webhook URL
+
+The Slack guide here: [Sending messages using incoming webhooks](https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/), should help you set this up
+
+<Aside type="tip">Note down your slack bot token and hook URL for the next step.</Aside>
+
+2. Set up a script that gets the pending user list and sends it to Slack
+
+You should be able to use the below script as a template:
+
+```bash
+#!/bin/bash
+
+export BOT_TOKEN=<Slack bot token>
+export HOOK_URL=https://hooks.slack.com/services/<Slack hook URL>
+export CANDIG_URL=<YOUR CANDIG_DOMAIN> # no trailing slash
+
+PostToSlack () {
+    # Single quoting the string breaks formatting, so instead we rely on the \" -> \\" to make su
+    # SAFE_TEXT=${1@Q}
+    SAFE_TEXT=${1//\"/\\\"}
+    #echo $SAFE_TEXT
+    curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$SAFE_TEXT\"}" $HOOK_URL
+}
+
+source /data/repo/env.sh
+
+ADMIN_USER=<Username>
+ADMIN_PASSWORD=$(cat /path/to/password.file)
+
+CURL_OUTPUT=$(curl -s --request POST \
+  --url 'https://candigauth.uhnresearch.ca/auth/realms/candig/protocol/openid-connect/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data grant_type=password \
+  --data client_id=$CANDIG_CLIENT_ID \
+  --data client_secret=$CANDIG_CLIENT_SECRET \
+  --data username=$ADMIN_USER \
+  --data password=$ADMIN_PASSWORD \
+  --data scope=openid
+)
+
+ERROR=$(echo $CURL_OUTPUT | grep 'error')
+if [[ $ERROR != "" ]]; then
+    PostToSlack "Obtaining prod admin token failed -- is /data/repo/env.sh up to date? Or did my password update?"
+    exit 1
+fi
+
+TOKEN=$(echo $CURL_OUTPUT | grep -Eo 'refresh_token":"[a-zA-Z0-9._\-]+' | cut -d '"' -f3)
+INGEST_OUTPUT=$(curl -s $CANDIG_URL/ingest/user/pending -H "Authorization: Bearer $TOKEN")
+PostToSlack "Pending users on candig.uhnresearch.ca: $INGEST_OUTPUT"
+```
+
+<Aside type="caution">You will need to save an admin password to a location that the script can access.</Aside>
+
+
+3. Set up a cron job on the CanDIG VM to run the script at your preferred interval. The following would run the script every day at 12:00PM
+
+```bash
+0 12 * * * /home/user/.hidden/get-token.sh0 12 * * * /home/user/.hidden/get-token.sh
+```
+
+
