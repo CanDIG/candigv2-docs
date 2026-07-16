@@ -122,11 +122,11 @@ The return will show all the `dac_authorizations` for the user, the deleted one 
 
 ## View the DAC Authorizations for a program
 
-The current DAC authorizations for a program can be viewed using the `ingest/program` endpoint
+The current DAC authorizations for a program can be viewed using the `ingest/program/{program_id}/dac_authorization` endpoint
 
 ```bash
 curl --request GET \
- --url $CANDIG_URL'/ingest/program/local-SYNTH_03' \
+ --url $CANDIG_URL'/ingest/program/local-SYNTH_03/dac_authorization' \
  -H 'accept: application/json' \
  -H 'Content-Type: application/json' \
  -H 'Authorization: Bearer '$TOKEN 
@@ -136,21 +136,15 @@ The listing of DAC authorizations for the program will be listed in the response
 
 ```bash
 {
-  "dac_authorizations": {
-    "user1@local-test.ca": {
-      "end_date": "2026-02-05",
-      "program_id": "local-SYNTH_03",
-      "start_date": "2025-02-05"
-    },
-    "user2@local-test.ca": {
-      "end_date": "2026-02-05",
-      "program_id": "local-SYNTH_03",
-      "start_date": "2025-02-05"
-    }
+  "user1@local-test.ca": {
+    "end_date": "2026-02-05",
+    "program_id": "local-SYNTH_03",
+    "start_date": "2025-02-05"
   },
-  "date_created": "2025-11-06",
-  "program_curators": [],
-  "program_id": "local-SYNTH_03",
-  "team_members": []
+  "user2@local-test.ca": {
+    "end_date": "2026-02-05",
+    "program_id": "local-SYNTH_03",
+    "start_date": "2025-02-05"
+  }
 }
 ```
