@@ -13,103 +13,37 @@ For data types 1 and 2, we recommend taking back ups after each ingest event and
 Logs can be backed up on a regular schedule and at a minimum, should be saved elsewhere when performing a rebuild of the stack.
 
 ## Backing up postgres databases
-
-Both clinical and genomic metadata are stored within databases running in the postgres container `postgres-db`. 
-
-The commands below assume that you are connected to the machine that is hosting the dockerized CanDIGv2 stack.
-
-To backup the data stored in these databases:
-
-1. Open an interactive terminal inside the running postgres docker container with:
+Backups of the postgres databases can be created by running the `make backup-all-postgres` command. These will be created in the location specified by the value `BACKUP_LOCATION` in your `.env` file.
 
 ```bash
-docker exec -it candigv2_postgres-db_1 bash
+make backup-all-postgres
 ```
 
-1. Dump contents of the two databases to files. `-d` specifies the database to dump, `-f` specifies the filename. Below we use the date and the name of the database being backed up:
-
-```bash
-pg_dump -U admin -d genomic -f yyyy-mm-dd-genomic-backup.sql
-pg_dump -U admin -d clinical -f yyyy-mm-dd-clinical-backup.sql
-```
-
-You should then have two files, each with a complete copy of each of the databases. 
-
-You can now exit the container by entering
-
-```bash
-exit
-```
-
-You should copy these to a secure location outside of the running container and consider encrypting them or otherwise ensuring that unauthorized users will not have access to the information. To copy from the container on to the docker host, you can use a command similar to: 
-
-```bash
-docker cp candigv2_postgres-db_1:yyyy-mm-dd-genomic-backup.sql /desired/path/target
-docker cp candigv2_postgres-db_1:yyyy-mm-dd-clinical-backup.sql /desired/path/target
-```
+You should copy these from `$BACKUP_LOCATION` to a secure location and consider encrypting them or otherwise ensuring that unauthorized users will not have access to the information.
 
 ## Restoring postgres databases
+You can restore the postgres databases using make commands as well. However, because the files in question can be very large and because overwriting the existing data can be very consequential, we have implemented a slightly more complex procedure.
 
-To restore the databases that we have backed up, assuming you have the CanDIG stack up and running 
+There are currently four CanDIG modules that use postgres databases; these can be found in the `CANDIG_DB_MODULES` value in your `.env` file. They correspond to the following locations in your CanDIGv2 repo:
 
-1. Stop the running katsu and htsget containers which are connected to the databases
+| Module      | Database name  | Directory location
+|-------------|----------------|-------------------
+| drs         | drs            | lib/drs
+| htsget      | genomic        | lib/htsget
+| katsu       | clinical       | lib/katsu
+| rnaget      | rnaget_db      | lib/rnaget
 
-```bash
-docker stop candigv2_katsu_1
-docker stop candigv2_htsget_1
-```
+To restore each of these databases:
+1.  The backup file to be restored must be de-encrypted and expanded into a `.sql` file.
+2.  Create a file called `restore.txt` in the module's directory location, e.g. `lib/drs/restore.txt`.
+3.  The `restore.txt` file should contain the full path of the location of the backup file.
 
-1. Then we need to copy the `sql` backup files into the running postgres container
-
-```bash
-docker cp /path/to/backup/yyyy-mm-dd-genomic-backup.sql candigv2_postgres-db_1:/yyyy-mm-dd-genomic-backup.sql
-docker cp /path/to/backup/yyyy-mm-dd-clinical-backup.sql candigv2_postgres-db_1:/yyyy-mm-dd-clinical-backup.sql
-```
-
-Next we need to delete the initialized databases so we can replace them with the backed up versions. 
-
-1. Open an interactive terminal to the postgres container
-
-```bash
-docker exec -it candigv2_postgres-db_1 bash
-```
-
-1. Then connect to the psql commandline prompt with a database other than the ones we want to drop:
-
-```bash
-psql -U admin -d template1
-```
-
-1. Then drop the two existing databases, create empty replacement databases then quit the psql commandline prompt
-
-```bash
-DROP DATABASE clinical;
-CREATE DATABASE clinical;
-DROP DATABASE genomic;
-CREATE DATABASE genomic;
-\q
-```
-
-1. Load the backed up copies from file with these commands:
-
-```bash
-psql -U admin -d clinical < yyyy-mm-dd-clinical-backup.sql
-psql -U admin -d genomic < yyyy-mm-dd-genomic-backup.sql
-```
-
-1. Exit the interactive terminal with the `exit` command.
-
-1. Restart the katsu and htsget services
-
-```bash
-docker start candigv2_katsu_1
-docker start candigv2_htsget_1
-```
+You can either run `make restore-postgres-<module>` to restore an individual database prepared in this way, or run `make restore-all-postgres` to restore all databases prepared in this way.
 
 You should be able to see the restored data in the data portal.
 
 :::tip
-If restoring data after updating to a new version of the stack or micoservive (particularly katsu), it is possible that the data that is restored back to the database will be invalid against the updated version. This may not be immediately obvious but will cause errors in the data portal attempts to retrieve data with invalid values. We don't currently have a great way for you to check if your data is valid against the latest stack but some options are:
+If restoring data after updating to a new version of the stack or microservice (particularly katsu), it is possible that the data that is restored back to the database will be invalid against the updated version. This may not be immediately obvious but will cause errors in the data portal attempts to retrieve data with invalid values. We don't currently have a great way for you to check if your data is valid against the latest stack but some options are:
 - Pay attention to the [MoHCCN data model changes](https://www.marathonofhopecancercentres.ca/researcher-hub/policies-and-guidelines) and be aware if the data in your system is affected by any updates
 - Retain the `map.json`s that were used for ingest and run them through the script [validate_coverage.py](https://github.com/CanDIG/clinical_ETL_code/blob/develop/src/clinical_etl/validate_coverage.py) to check for any new validation errors and warnings
 
