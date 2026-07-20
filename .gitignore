@@ -21,6 +21,8 @@ pnpm-debug.log*
 .DS_Store
 
 .vscode
+package-lock.json
+package.json
 .env*
 
 public/d2/*

@@ -14,11 +14,13 @@ make stop-all
 ```
 
 Individual services can be stopped using the docker command:
+
 ```bash
 docker container stop candigv2_<name of module>_1
 ```
 
 eg. to stop the ingest container this would be:
+
 ```bash
 docker container stop candigv2_candig-ingest_1
 ```
@@ -38,14 +40,16 @@ To start a single container, the following docker command can be used:
 ```bash
 docker container start candigv2_<name of module>_1
 ```
+
 e.g. for the ingest container:
+
 ```bash
 docker container start candigv2_candig-ingest_1
 ```
 
 ## Cleaning and rebuilding individual services
 
-If any individual services are updated, they will need to be cleaned, rebuilt and recomposed. 
+If any individual services are updated, they will need to be cleaned, rebuilt and recomposed.
 
 Any individual service can be cleaned with:
 
@@ -68,7 +72,7 @@ make clean-htsget
 This stops the container, deletes the container and deletes the image.
 
 :::note
-For services that use the postgres container to save data, i.e. htsget (genomic data) and katsu (clinical data), deleting and rebuilding the service will not delete the data in postgres. If there have been changes to the underlying database, the postgres database will need to be deleted and rebuilt. 
+For services that use the postgres container to save data, i.e. htsget (genomic data) and katsu (clinical data), deleting and rebuilding the service will not delete the data in postgres. If there have been changes to the underlying database, the postgres database will need to be deleted and rebuilt.
 :::
 
 To rebuild and recompose a service first run:
@@ -103,11 +107,11 @@ make rebuild-keep-data
 If there are changes that have changed the structure of the database or impacted the versions of other `CANDIG_DATA_MODULES` this way of rebuilding cannot be used.
 :::
 
-## Destructive Cleanup 
+## Destructive Cleanup
 
-Use the following steps to clean up running CanDIGv2 services in a docker-compose configuration. 
+Use the following steps to clean up running CanDIGv2 services in a docker-compose configuration.
 
-:::caution 
+:::caution
 Note that these steps are destructive and will remove **ALL** logs, containers, secrets, volumes, networks, certs, and images. If you are using docker in a shared environment (i.e. with other non-CanDIGv2 containers running) please consider running the cleanup steps manually instead.
 :::
 
@@ -137,7 +141,7 @@ See the `Makefile` for the exact commands that each of these targets runs.
 
 ## Rebuild entire stack from scratch
 
-1. Perform any backups of data necessary if in a non-testing environment. (see [backup and restore doc](/candigv2-docs/deployment/backup-restore-candig) for detailed instructions.)
+1. Perform any backups of data necessary if in a non-testing environment. (see [backup and restore doc](/CanDIGv2/deployment/backup-restore-candig) for detailed instructions.)
 
 2. Clean up the current containers with `make clean-all`
 

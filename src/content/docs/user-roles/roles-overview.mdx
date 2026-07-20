@@ -5,10 +5,11 @@ tableOfContents: true
 prev: false
 ---
 
-import { Icon } from 'astro-icon/components';
-import { Steps } from '@astrojs/starlight/components';
+import { Icon } from "astro-icon/components";
+import { Steps } from "@astrojs/starlight/components";
 
 In CanDIG, there are five main user roles, from most privileged to least privileged they are:
+
 1. Site admin
 2. Site curator
 3. Program curator
@@ -17,7 +18,7 @@ In CanDIG, there are five main user roles, from most privileged to least privile
 
 ## User roles summary table
 
-A summary of what each user role can do within a deployed CanDIG site is in the table below. The full technical breakdown of which endpoints each user can access is controlled through opa and is found in [`paths.json`](https://github.com/CanDIG/candig-opa/blob/develop/defaults/paths.json) 
+A summary of what each user role can do within a deployed CanDIG site is in the table below. The full technical breakdown of which endpoints each user can access is controlled through opa and is found in [`paths.json`](https://github.com/CanDIG/candig-opa/blob/develop/defaults/paths.json)
 
 <table>
   <thead>
@@ -33,43 +34,93 @@ A summary of what each user role can do within a deployed CanDIG site is in the 
   <tbody>
     <tr>
       <td>Site admin</td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
     </tr>
     <tr>
       <td>Site curator</td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
     </tr>
     <tr>
       <td>Program curator</td>
-      <td><Icon name="mdi:shield-off" color="red"/></td>
-      <td><Icon name="mdi:shield-half-full" color="orange"/></td>
-      <td><Icon name="mdi:shield-half-full" color="orange"/></td>
-      <td><Icon name="mdi:shield-half-full" color="orange"/></td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td>
+        <Icon name="mdi:shield-off" color="red" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-half-full" color="orange" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-half-full" color="orange" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-half-full" color="orange" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
     </tr>
     <tr>
       <td>Team member</td>
-      <td><Icon name="mdi:shield-off" color="red"/></td>
-      <td><Icon name="mdi:shield-off" color="red"/></td>
-      <td><Icon name="mdi:shield-off" color="red"/></td>
-      <td><Icon name="mdi:shield-half-full" color="orange"/></td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td>
+        <Icon name="mdi:shield-off" color="red" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-off" color="red" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-off" color="red" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-half-full" color="orange" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
     </tr>
     <tr>
       <td>CanDIG Authorized User</td>
-      <td><Icon name="mdi:shield-off" color="red"/></td>
-      <td><Icon name="mdi:shield-off" color="red"/></td>
-      <td><Icon name="mdi:shield-off" color="red"/></td>
-      <td><Icon name="mdi:shield-half-full" color="orange"/></td>
-      <td><Icon name="mdi:shield-check" color="green"/></td>
+      <td>
+        <Icon name="mdi:shield-off" color="red" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-off" color="red" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-off" color="red" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-half-full" color="orange" />
+      </td>
+      <td>
+        <Icon name="mdi:shield-check" color="green" />
+      </td>
     </tr>
   </tbody>
 </table>
@@ -84,7 +135,7 @@ A default `Site admin` is set up when the CanDIGv2 stack is first deployed, this
 
 ## 2. Site curator
 
-To become a `Site curator`, a `Site admin` must give a user `Site curator` privileges. Once given `Site curator` status, a user can then register, ingest and delete any program at a site. As they can register programs, they also can give [`Program curator`](#3-program-curator) and [`Team member`](#4-team-members) privileges to users. The `Site curator` role is intended to be used when there are a few dedicated curators who will be ingesting all data at a site and they are **all authorized** to see **all data** that will be ingested at that site. 
+To become a `Site curator`, a `Site admin` must give a user `Site curator` privileges. Once given `Site curator` status, a user can then register, ingest and delete any program at a site. As they can register programs, they also can give [`Program curator`](#3-program-curator) and [`Team member`](#4-team-members) privileges to users. The `Site curator` role is intended to be used when there are a few dedicated curators who will be ingesting all data at a site and they are **all authorized** to see **all data** that will be ingested at that site.
 
 :::caution
 Site curators can see and delete **all** data submitted at a CanDIG site, ensure anyone with this role has the appopriate authorization for this role.
@@ -106,7 +157,7 @@ A CanDIG Authorized User is the base level for any user that should be able to l
 
 > The process for a user to become a `CanDIG Authorized User` if requesting through the data portal.
 
-```d2 
+```d2
 # User request flow
 shape: sequence_diagram
 unauthz'd user: {shape: person}
@@ -132,7 +183,7 @@ authz'd user -> data portal: 7. View summary stats {style: {font-size: 24}}
 
 > The process for a user to become a `CanDIG Authorized User` if they have been pre-approved.
 
-```d2 
+```d2
 # User request flow
 shape: sequence_diagram
 preauthz'd user: {shape: person}
@@ -154,12 +205,3 @@ ingest -> ingest: 6. Auto-approve user {style: {font-size: 24}}
 preauthz'd user -> authz'd user: 7. Unauthorized user becomes authorized {style: {font-size: 24}}
 authz'd user -> data portal: 8. View summary stats {style: {font-size: 24}}
 ```
-
-
-
-
-
-
-
-
-

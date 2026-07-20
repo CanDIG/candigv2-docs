@@ -1,12 +1,12 @@
 ---
 title: Assign User roles
-description: How to grant a CanDIG user permissions to perform tasks and access data 
+description: How to grant a CanDIG user permissions to perform tasks and access data
 tableOfContents: true
 ---
 
-import { Badge } from '@astrojs/starlight/components';
+import { Badge } from "@astrojs/starlight/components";
 
-Detailed information about what each role means can be found on the [Roles overview](/candigv2-docs/user-roles/roles-overview) page. This page walks through how to assign, approve and reject various user roles. All user management is done via API calls, there is currently no graphical user interface for this process. If using our API regularly, you may want to set up an API client such as [Postman](https://www.postman.com/), [Bruno](https://www.usebruno.com/) or [RapidAPI](https://paw.cloud/) to help with managing your frequently used API calls.
+Detailed information about what each role means can be found on the [Roles overview](/CanDIGv2/user-roles/roles-overview) page. This page walks through how to assign, approve and reject various user roles. All user management is done via API calls, there is currently no graphical user interface for this process. If using our API regularly, you may want to set up an API client such as [Postman](https://www.postman.com/), [Bruno](https://www.usebruno.com/) or [RapidAPI](https://paw.cloud/) to help with managing your frequently used API calls.
 
 ## Getting an API token
 
@@ -17,16 +17,16 @@ Any user can get a token using this process but the activities allowed will depe
 
 1. Get a token by logging into the candig data portal as Site admin and copying the API token.
 
-    a. Go to the icon in the top right of the screen and click the cog
+   a. Go to the icon in the top right of the screen and click the cog
 
-    b. Click ‘ *** Get API Token’
+   b. Click ‘ \*\*\* Get API Token’
 
-    c. Click the token to copy the text
+   c. Click the token to copy the text
 
 :::danger
 This token should be kept secure, it lasts for 30 mins
 :::
- 
+
 2. Go to a terminal and save it into a variable called TOKEN
 
 ```bash
@@ -37,7 +37,7 @@ TOKEN=ey-pasted-jwt
 
 ## Add one or more pre-approved users <Badge text="Site admin" variant="caution" />
 
-This can only be performed by a Site admin. The Site admin can add one or many users to the list via a post to the `/ingest/user/preapproved` endpoint. The first time these users login to the CanDIG data portal, they will see a page with a 'Request Access' button but will be automatically approved as CanDIG Authorized Users after clicking the button. [This diagram](/candigv2-docs/user-roles/roles-overview/#pre-approval-flow) presents visual representation of this process.
+This can only be performed by a Site admin. The Site admin can add one or many users to the list via a post to the `/ingest/user/preapproved` endpoint. The first time these users login to the CanDIG data portal, they will see a page with a 'Request Access' button but will be automatically approved as CanDIG Authorized Users after clicking the button. [This diagram](/CanDIGv2/user-roles/roles-overview/#pre-approval-flow) presents visual representation of this process.
 
 First [get a token](#getting-an-api-token), then:
 
@@ -94,10 +94,9 @@ curl --request GET \
 }
 ```
 
-
 ## Approve or reject a user that has requested access <Badge text="Site admin" variant="caution" />
 
-This can only be performed by a Site admin. Unauthorized users can request access by clicking a button in the CanDIG Data portal. They will only see this button if they are unauthorized and are not currently on the pending users list. Clicking this button causes the user to be added to the `pending users` list. A Site admin then needs to approve these users so they can become [CanDIG Authorized Users](/candigv2-docs/user-roles/roles-overview#5-candig-authorized-user). [This diagram](/candigv2-docs/user-roles/roles-overview#request-flow) demonstrates this process visually.
+This can only be performed by a Site admin. Unauthorized users can request access by clicking a button in the CanDIG Data portal. They will only see this button if they are unauthorized and are not currently on the pending users list. Clicking this button causes the user to be added to the `pending users` list. A Site admin then needs to approve these users so they can become [CanDIG Authorized Users](/CanDIGv2/user-roles/roles-overview#5-candig-authorized-user). [This diagram](/CanDIGv2/user-roles/roles-overview#request-flow) demonstrates this process visually.
 
 First [get a token](#getting-an-api-token), then:
 
@@ -114,6 +113,7 @@ curl --request GET \
 ```
 
 e.g. response:
+
 ```bash
 {
   "results": [
@@ -136,6 +136,7 @@ curl --request POST \
 ```
 
 If successful, you should get a response such as:
+
 ```bash
 {
   "message": "User user1@test.ca has been approved"
@@ -164,9 +165,9 @@ Where a successful response should be something like:
 }
 ```
 
-### Reject pending users 
+### Reject pending users
 
-To reject users that have requested access, use the `DELETE` method, on the same endpoint. 
+To reject users that have requested access, use the `DELETE` method, on the same endpoint.
 
 :::caution
 `DELETE` clears the whole list of pending users so be sure to approve valid users before using the `DELETE` method to clear any remaining users.
@@ -206,7 +207,7 @@ curl --request DELETE \
   --url $CANDIG_URL'/ingest/user/user2@test.ca' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer '$TOKEN 
+  -H 'Authorization: Bearer '$TOKEN
 ```
 
 The user will then no longer be able to login and explore the CanDIG data portal.
@@ -228,12 +229,11 @@ curl --request POST \
 ```
 
 2. You can check whether a user has the Site curator role by doing the same curl call with a GET request. It should return true.
- Users can be removed as Site curators by using the same endpoint with a DELETE action instead of POST/GET.
-
+   Users can be removed as Site curators by using the same endpoint with a DELETE action instead of POST/GET.
 
 ## Assign `Program curator` and `Team member` roles <Badge text="Site admin" variant="caution" /> <Badge text="Site curator" variant="tip" /> <Badge text="Program curator" variant="success" />
 
-Assigning Program curator and Team member roles is done through program registration. See the step-by-step guide here: [Registering programs](/candigv2-docs/ingest/register-programs). 
+Assigning Program curator and Team member roles is done through program registration. See the step-by-step guide here: [Registering programs](/CanDIGv2/ingest/register-programs).
 
 For each program that a curator or Team member needs to be added to, a separate program registration will need to be submitted by either a `Site admin`, `Site curator` or a `Program curator` already named on that program.
 
@@ -243,4 +243,4 @@ A `POST` request to the `ingest/program` replaces any existing program registrat
 
 ## Add or remove a Site admin <Badge text="Site admin" variant="caution" />
 
-A Site admin can be changed by following the steps on the [Production Deployment page](/candigv2-docs/deployment/production#change-the-default-site-admin).
+A Site admin can be changed by following the steps on the [Production Deployment page](/CanDIGv2/deployment/production#change-the-default-site-admin).

@@ -6,7 +6,7 @@ Currently being deployed to https://candig.github.io/candigv2-docs/ via github a
 
 Website is deployed from the Stable branch and should be up to date with changes being made on the stable branch of [CanDIGv2](https://github.com/CanDIG/CanDIGv2).
 
-We try to update docs inline with current development on the `develop` branch. They can be viewed in the `src/content/docs/` folder in markdown format, but not all nice ux features are properly displayed. 
+We try to update docs inline with current development on the `develop` branch. They can be viewed in the `src/content/docs/` folder in markdown format, but not all nice ux features are properly displayed.
 
 You can run a develop version of the docs website following the commands after checking out branch you are interested in building:
 
@@ -15,6 +15,21 @@ npm install
 npm run dev
 ```
 
+# How to make updates
+
+## If the update applies to both stable and develop versions
+
+e.g. fixing a typo, correcting a mistake, changing configurations
+
+Please make changes on both the develop and stable branches and create two PRs and request review before merging
+
+## If the update applies to the stable version only
+
+Please make a pull request against the stable branch only and request review before merging
+
+## If the update applies to the develop version only
+
+Please make a pull request against the develop branch only and request review before merging
 
 # Deployment info:
 

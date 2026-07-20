@@ -169,7 +169,9 @@ It is possible that the Vault audit log is getting too large. You can check the 
 We enabled the Vault audit log by default, but most authorization requests are logged in the Fluentd log, so the internal Vault log is redundant.
 
 If this happens, truncate the vault-audit log file:
+
 ```bash
 docker exec candigv2_vault-runner_1 bash -c "tail /vault/vault-audit.log > /vault/vault-audit.log"
 ```
-You can also try [backing up and restoring](https://candig.github.io/candigv2-docs/deployment/backup-restore-candig/#backing-up-secrets-and-authorization-data) your Vault containers.
+
+You can also try [backing up and restoring](https://candig.github.io/CanDIGv2/deployment/backup-restore-candig/#backing-up-secrets-and-authorization-data) your Vault containers.
