@@ -1,0 +1,60 @@
+name: Docs merge report
+
+# Runs automatically whenever a PR proposes merging develop into stable
+# (i.e. a release PR), and posts a report of which files changed on both
+# sides, which files may have been silently dropped, and which are purely
+# new content. See scripts/docs-merge-report.sh for the logic, and
+# RELEASE-PROCESS.md for how to act on the report.
+
+on:
+  pull_request:
+    branches:
+      - stable
+
+jobs:
+  merge-report:
+    if: github.head_ref == 'develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate report
+        id: report
+        run: |
+          chmod +x scripts/docs-merge-report.sh
+          {
+            echo 'REPORT<<EOF'
+            ./scripts/docs-merge-report.sh origin/stable origin/develop
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `${{ steps.report.outputs.REPORT }}`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const marker = '<!-- docs-merge-report -->';
+            const existing = comments.find(c => c.body.includes(marker));
+            const commentBody = `${marker}\n${body}`;
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: commentBody,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody,
+              });
+            }
