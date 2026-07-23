@@ -13,7 +13,7 @@ import d2 from 'astro-d2';
 // https://astro.build/config
 export default defineConfig({
     site: 'https://candig.github.io',
-    base: 'CanDIGv2',
+    base: 'candigv2-docs',
     vite: {
         plugins: [tailwindcss()]
     },
@@ -31,7 +31,7 @@ export default defineConfig({
         ],
         favicon: '/favicon.ico',
         editLink: {
-            baseUrl: 'https://github.com/CanDIG/CanDIGv2/edit/develop/'
+            baseUrl: 'https://github.com/CanDIG/candigv2-docs/edit/develop/'
         },
         logo: {
             src: './src/assets/my-logo.png',
