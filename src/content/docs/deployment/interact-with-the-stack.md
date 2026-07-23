@@ -78,7 +78,7 @@ make build-<name of module>
 ```
 
 :::note
-Containers that have an associated volume will need to have the volume rebuild with `make docker-volumes` before being able to successfully compose the container.
+Containers that have an associated volume will need to have the volume rebuilt with `make docker-volumes` before being able to successfully compose the container.
 :::
 
 Then compose the container with:
@@ -93,7 +93,7 @@ Some services can't be rebuilt individually without causing issues with the stac
 
 ## Non-destructive Rebuild
 
-To rebuild the CanDIGv2 without destroying data in postgres or keycloak the make target `rebuild-keep-data` with:
+To rebuild the CanDIGv2 stack without destroying data in postgres or keycloak, use the make target `rebuild-keep-data` with:
 
 ```bash
 make rebuild-keep-data

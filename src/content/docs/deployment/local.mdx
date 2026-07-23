@@ -333,10 +333,10 @@ export CANDIG_NOT_ADMIN2_PASSWORD=<auto generated password>
 ```
 
 :::note
-After a fresh deployment, there will not be any data loaded into the system. The automated integration tests load in a small synthetic dataset with limited clinical and genomic data files. If you would like the data from the tests to remain in the system so that is can be explored in the data portal, ensure that the variable `KEEP_TEST_DATA` in your `.env` is set to `true`.
+After a fresh deployment, there will not be any data loaded into the system. The automated integration tests load in a small synthetic dataset with limited clinical and genomic data files. If you would like the data from the tests to remain in the system so that it can be explored in the data portal, ensure that the variable `KEEP_TEST_DATA` in your `.env` is set to `true`.
 :::
 
-Confirm your deployment was successfuly the automatic integration tests:
+Confirm your deployment was successful by running the automatic integration tests:
 
 ```bash
 make test-integration
@@ -397,7 +397,7 @@ Where `<your local IP>` is your local network IP (e.g. 192.168.x.x, or another r
 
 If the command still fails, it may be necessary to disable your local firewall, or edit it to allow requests from all ports used in the Docker stack.
 
-Edit your firewall settings to allow connections from those adresses:
+Edit your firewall settings to allow connections from those addresses:
 
 ```bash
 export DOCKER_BRIDGE_IP=$(docker network inspect bridge | grep Subnet | awk '{print $2}' | tr -d ',')
