@@ -19,11 +19,11 @@ Before you can use the ingest endpoint, you will need an authorized bearer token
 
 1. Get a token by logging into the candig data portal as Site admin and copying the API token.
 
-    a. Go to the icon in the top right of the screen and click the cog
+   a. Go to the icon in the top right of the screen and click the cog
 
-    b. Click ‘ *** Get API Token’
+   b. Click ‘ \*\*\* Get API Token’
 
-     c. Click the token to copy the text
+   c. Click the token to copy the text
 
 2. Open a terminal and save it into a variable called TOKEN
 
@@ -45,7 +45,7 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer '$TOKEN \
-  -d '@/absolute/path/to/dir_name_map.json>
+  -d '<@/absolute/path/to/dir_name_map.json>'
 ```
 
 If ingest worked correctly, you should get a response from the API giving you your queue_id to check the status of your ingest:
@@ -91,4 +91,4 @@ Example response from the status endpoint when ingest for a program is complete:
 }
 ```
 
-Once you have successfully ingested all your clinical data, you can proceed with ingesting your genomic files and linking them the the ingested Sample Registration objects.
+Once you have successfully ingested all your clinical data, you can proceed with ingesting your genomic files and linking them to the ingested Sample Registration objects.
