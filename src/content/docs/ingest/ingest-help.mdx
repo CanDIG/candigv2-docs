@@ -139,6 +139,10 @@ curl --request DELETE \
 
 Remember to replace `PROGRAM_ID` and `CANDIG_URL` with the actual values for your program and deployment.
 
+:::tip
+If you'd like to delete multiple programs at once, check out the helper script [delete_clinical_data_katsu.py](https://github.com/CanDIG/candigv2-ingest/blob/develop/helper_scripts/delete_clinical_data_katsu.py) within the helper scripts directory in the candigv2-ingest repo.
+:::
+
 ### B. Genomic Data
 
 First, you’ll need to get an authentication token to delete the data by calling this command:
@@ -185,3 +189,24 @@ When attempting clinical data ingest into katsu, if you get a response such as b
 ```
 
 It means you have not yet registered your program before ingesting. Please follow the instructions in [Register Programs](/candigv2-docs/ingest/register-programs/) to submit a program authorization before attempting clinical ingest again.
+
+## How to find and index unindexed files at your node
+
+Sometimes the indexer may fail, leaving your sequencing files in a state where some have indexed successfully and some have not. To find and index unindexed files on your system, use the [`index_unindexed.sh`](https://github.com/CanDIG/candigv2-ingest/blob/develop/helper_scripts/index_unindexed.sh) helper script. This script identifies all unindexed files and outputs a text file with all the curl commands needed to index all unindexed files.
+
+## How to assign sequencing objects to a different program
+
+In the course of reingesting data, it is possible for sequencing file objects to become out of sync with clinical data and which program they are assigned to. For example, if a program is split betweenn releaseable and non-releaseable data. While reingesting clinical data is fairly fast, if a submitter doesn't want to resubmit and reindex genomic files, they can use some helper scripts to re-assign the program for specific objects.
+
+1. First, make a call to the `drs/biosamples` endpoint that filters results to the experiments and linked object you want to re-assign and save the result to a text file
+2. Use this text file as input to the [`extract_drs.py`](https://github.com/CanDIG/candigv2-ingest/blob/develop/helper_scripts/extract_drs.py) helper script
+3. Create a csv file with the columns `Submitter Sample ID` and `Program ID` that contains the correct mappings of sample ID to program
+4. Use the [`reset_programs.py`](https://github.com/CanDIG/candigv2-ingest/blob/develop/helper_scripts/reset_programs.py) helper script with the csv file and the output from `extract_drs.py` to reassign the objects to the correct programs
+
+## How to check the verified status of your ingested sequencing files
+
+It is possible that linkages to ingested sequencing files may become stale over time. To check the verification status of your ingested sequencing files, use the [`verified_analyses.py`](https://github.com/CanDIG/candigv2-ingest/tree/develop/helper_scripts) helper script
+
+## How to make sure the sequencing files you expected are actually properly ingested
+
+Sometimes it is difficult to tell whether the ingest you performed actually ingested all the sequencing files you expected. The helper script [`get_ingested_files.py`](https://github.com/CanDIG/candigv2-ingest/blob/develop/helper_scripts/get_ingested_files.py) gives a summary of all the ingested sequencing files at your node.
