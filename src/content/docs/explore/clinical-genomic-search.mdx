@@ -3,7 +3,7 @@ title: Querying data in CanDIG
 description: Guide to using the query features in CanDIG.
 ---
 
-Querying in CanDIG happens on the 'Clinical & Genomic Search' page, which is accessed by clicking the 'Clinical & Genomic Search' button in the header of the CanDIG Data Portal.
+Querying in CanDIG happens on the 'Clinical & Genomic Search' page, which is accessed by clicking the 'Clinical & Genomic Search' button in the header of the CanDIG Data Portal. An in-browser walk through can be accessed by clicking the 'Take a Tour' button in the top right of the window.
 
 ## Aggregate vs Donor-level results
 
@@ -11,11 +11,22 @@ Each user that can log into CanDIG may also have specific authorization for prog
 
 When a user performs a search using the filters in the sidebar, for programs they do not have authorization for, they will be displayed aggregated summary results in the Patient Data table and Data Visualization Charts, with any results returned with less than 10 donors censored to `<10`.
 
-For any programs the user has authorization for, they will be displayed the exact number of donors matching the query as well as the full list of donors that match the query. The full metadata for these donors can be explored by clicking the donor row in the 'Matching Patients' table.
+For any programs the user has authorization for, they will be displayed the exact number of donors matching the query as well as the full list of donors that match the query.
 
-## Filtering based on Clinical data 
+## Patient info page
+
+The full metadata for a donor can be explored by clicking the donor row in the 'Matching Patients' table. A short tour of the patient info page opens the first time you access a patient data page, or can be started by clicking the 'Take a Tour' button in the top right of the window.
+
+A patient timeline displays events such as date of diagnosis. date of death, treatment start and end dates, specimen collection dates and follow up dates where available.
+
+![Patient Timeline](../../../assets/patient-timeline.png)
+
+Detailed clinical metadata from a specific donor from a specific node and program can be looked up by using the 'Lookup donor by ID' dropdowns in the sidebar on the left. Only programs and donors the user has authorization for will be included in the drop-downs.
+
+## Filtering based on Clinical data
 
 Currently, users can filter data based on the following fields:
+
 - node location
 - program id
 - treatment type
