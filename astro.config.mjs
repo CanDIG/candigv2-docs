@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi'
-import starlightUtils from "@lorenzo_lewis/starlight-utils";
+import starlightSidebarTopics from 'starlight-sidebar-topics';
 import starlightLinksValidator from 'starlight-links-validator';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -42,14 +42,6 @@ export default defineConfig({
         },],
     plugins: [
         starlightLinksValidator(),
-        starlightUtils({
-            navLinks: {
-                leading: { useSidebarLabelled: "headerLinks" },
-            },
-            multiSidebar: {
-                switcherStyle: "hidden"
-            }
-        }),
         starlightOpenAPI([
             {
                 base: 'technical/ingest-api',
@@ -93,107 +85,74 @@ export default defineConfig({
                 schema: 'https://raw.githubusercontent.com/CanDIG/federation_service/refs/heads/stable/candig_federation/federation.yaml',
                 collapsed: true
             },
-        ])
-    ],
-    sidebar: [
-        {
-            collapsed: true,
-            label: 'headerLinks',
-            items: [
-                { label: 'Deploy', slug: 'deployment/local' },
-                { label: 'Submit', slug: 'ingest' },
-                { label: 'User Roles', slug: 'user-roles' },
-                { label: 'Explore', slug: 'explore' },
-                { label: 'Technical', slug: 'technical'}
-            ]
-        },
-        {
-            collapsed: true,
-            label: 'Deployment',
-            items: [
-                {
-                    label: 'Deployment',
-                    items: [
-                        { label: 'Local deployment', slug: 'deployment/local' },
-                        { label: 'Production deployment', slug: 'deployment/production'},
-                        { label: 'Testing', slug: 'deployment/ingest-and-test'},
-                        { label: 'Interact using Make', slug: 'deployment/interact-with-the-stack'},
-                        { label: 'Logging', slug: 'deployment/logging'},
-                        { label: 'Back up/Restore', slug: 'deployment/backup-restore-candig'},
-                        { label: 'Troubleshooting', slug: 'deployment/stack-troubleshooting'},
-                        { label: 'Update CanDIG', slug: 'deployment/update-candig'}
-                    ]
-                }
-            ]
-        },
-        {
-            label: 'Submission',
-            items: [
-                // Each item here is one entry in the navigation menu.
-                {
-                    label: 'Data submission steps',
-                    items:
-                    [
-                        'ingest/prepare-clinical',
-                        'ingest/register-programs',
-                        'ingest/ingest-clinical',
-                        'ingest/prepare-genomic',
-                        'ingest/ingest-genomic',
-                        'ingest/ingest-help',
-                    ]
-                }
-            ],
-        },
-        {
-            label: 'Explore',
-            items: [
-                // Each item here is one entry in the navigation menu.
-                {
-                    label: 'Exploring data on the portal',
-                    items:
-                    [
-                        'explore/summary',
-                        'explore/clinical-genomic-search',
-                        'explore/completeness'
-                    ]
-                }
-            ],
-        },
-        {
-            label: 'User Roles',
-            collapsed: true,
-            items: [
-                {
-                    label: 'User Roles',
-                    items:
-                    [
-                        {label: 'Roles Overview', slug: 'user-roles/roles-overview'},
-                        {label: 'Assign user roles', slug: 'user-roles/assign-roles'},
-                        {label: 'DAC Authorization', slug: 'user-roles/dac-authorization'},
-                        {label: 'User Notifications', slug: 'user-roles/user-notifications'},
-                    ]
-                }
-            ]
-
-        },
-        {
-            label: 'Technical Docs',
-            collapsed: true,
-            items: [
-                {
-                    label: 'Tech docs',
-                    items:
-                    [
-                        { label: 'Architecture', slug: 'technical/architecture' },
-                        { label: 'Docker and submods', slug: 'technical/docker-and-submodules' },
-                        { label: 'API docs', slug: 'technical/api-docs' },
-                        ...openAPISidebarGroups,
-                    ]
-                }
-
-
-            ]
-        },
+        ]),
+        starlightSidebarTopics([
+            {
+                label: 'Deploy',
+                link: '/deployment/local/',
+                items: [
+                    { label: 'Local deployment', slug: 'deployment/local' },
+                    { label: 'Production deployment', slug: 'deployment/production' },
+                    { label: 'Testing', slug: 'deployment/ingest-and-test' },
+                    { label: 'Interact using Make', slug: 'deployment/interact-with-the-stack' },
+                    { label: 'Logging', slug: 'deployment/logging' },
+                    { label: 'Back up/Restore', slug: 'deployment/backup-restore-candig' },
+                    { label: 'Troubleshooting', slug: 'deployment/stack-troubleshooting' },
+                    { label: 'Update CanDIG', slug: 'deployment/update-candig' },
+                ],
+            },
+            {
+                label: 'Submit',
+                link: '/ingest/',
+                items: [
+                    {
+                        label: 'Data submission steps',
+                        items: [
+                            'ingest/prepare-clinical',
+                            'ingest/register-programs',
+                            'ingest/ingest-clinical',
+                            'ingest/prepare-genomic',
+                            'ingest/ingest-genomic',
+                            'ingest/ingest-help',
+                        ],
+                    },
+                ],
+            },
+            {
+                label: 'User Roles',
+                link: '/user-roles/',
+                items: [
+                    { label: 'Roles Overview', slug: 'user-roles/roles-overview' },
+                    { label: 'Assign user roles', slug: 'user-roles/assign-roles' },
+                    { label: 'DAC Authorization', slug: 'user-roles/dac-authorization' },
+                    { label: 'User Notifications', slug: 'user-roles/user-notifications' },
+                ],
+            },
+            {
+                label: 'Explore',
+                link: '/explore/',
+                items: [
+                    {
+                        label: 'Exploring data on the portal',
+                        items: [
+                            'explore/summary',
+                            'explore/clinical-genomic-search',
+                            'explore/completeness',
+                        ],
+                    },
+                ],
+            },
+            {
+                label: 'Technical',
+                link: '/technical/',
+                items: [
+                    { label: 'Architecture', slug: 'technical/architecture' },
+                    { label: 'Docker and submods', slug: 'technical/docker-and-submodules' },
+                    { label: 'API docs', slug: 'technical/api-docs' },
+                    ...openAPISidebarGroups,
+                ],
+            },
+        ]),
     ],
         })]
 });
