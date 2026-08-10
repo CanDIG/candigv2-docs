@@ -16,73 +16,48 @@ The process for updating depends on the changes contained in a particular releas
 
 <Steps>
 
-1.  Backup your existing deployment using the steps on the page: [Backing up and restoring CanDIG data](/candigv2-docs/deployment/backup-restore-candig/). This should be done regardless of whether you think the deployment will destroy any data, just in case anything goes wrong. Things you will want to back up are:
+1.  Backup your existing deployment using the steps on the page: [Backing up and restoring CanDIG data](/candigv2-docs/deployment/backup-restore-candig/). This should be done regardless of whether you think the deployment will destroy any data, just in case anything goes wrong. Things you will want to back up are: - ingested genomic and clinical data - Guide here: [Back up postgres databases](/candigv2-docs/deployment/backup-restore-candig/#backing-up-postgres-databases) - log files - Guide here: [backup logfiles](/candigv2-docs/deployment/backup-restore-candig/#backing-up-logs) - user authorizations and federation information - Guide here: [backup secrets and authorizations](/candigv2-docs/deployment/backup-restore-candig/#backing-up-secrets-and-authorization-data)
 
-    - ingested genomic and clinical data - Guide here: [Back up postgres databases](/candigv2-docs/deployment/backup-restore-candig/#backing-up-postgres-databases)
-    - log files - Guide here: [backup logfiles](/candigv2-docs/deployment/backup-restore-candig/#backing-up-logs)
-    - user authorizations - Guide here: [backup secrets and authorizations](/candigv2-docs/deployment/backup-restore-candig/#backing-up-secrets-and-authorization-data)
-    - federation details (if your node is federated with other nodes) - see expandable section below:
+        - git repos diffs - see expandable section below:
 
-    <details>
-    <summary>How to save currently stored federation information</summary>
+        <details>
 
-    1.  [Get a site admin token](/candigv2-docs/user-roles/assign-roles/#getting-an-api-token) and in a terminal session, store in a variable called `TOKEN`, store your candig domain in a variable called `CANDIG_URL`
-
-    2.  Call the GET method to list all currently federated servers:
+    <summary>
+      Example bash script of how to save git diffs of all CanDIGv2 repos
+    </summary>
 
         ```bash
-        curl -X 'GET' \
-        $CANDIG_URL'/federation/v1/servers' \
-        -H 'accept: application/json' \
-        -H 'Content-Type: application/json' \
-        -H 'Authorization: Bearer '$TOKEN
+        #!/bin/bash
+
+        current_date=$(date +%F)
+
+        # Set the output file path in the tmp/logs directory
+        output_file="tmp/logs/diff-$current_date.diff"
+
+        # Create the tmp/logs directory if it doesn't exist
+        mkdir -p tmp/logs
+
+        # Clear the output file if it exists
+        > $output_file
+
+        # Get the diff of the main repo and append to the file
+        echo "Diff for the main repo:" >> $output_file
+        git diff --no-ext-diff --submodule=diff >> $output_file
+        echo "---------------------------------------------------" >> $output_file
+
+        # Loop through each subrepo in the 'lib' directory
+        for dir in lib/*/; do
+          if [ -d "$dir/.git" ]; then # Enter the subrepo directory and get the diff
+            echo "Diff for subrepo $dir:" >> $output_file
+            (cd "$dir" && git diff) >> $output_file
+            echo "---------------------------------------------------" >> $output_file
+          fi
+        done
+
+        echo "Git diff for main repo and subrepos has been saved to $output_file."
         ```
 
-    3.  Save the output to a text file so you have the information available after you have upgraded your deployment
-
-    :::note
-    If a node you are federated with has performed a 'destructive rebuild' which reset their keycloak instance, you may need to ask them for a new bearer token.
-    :::
-
-    </details>
-
-    - git repos diffs - see expandable section below:
-
-    <details>
-    <summary>Example bash script of how to save git diffs of all CanDIGv2 repos</summary>
-
-    ```bash
-    #!/bin/bash
-
-    current_date=$(date +%F)
-
-    # Set the output file path in the tmp/logs directory
-    output_file="tmp/logs/diff-$current_date.diff"
-
-    # Create the tmp/logs directory if it doesn't exist
-    mkdir -p tmp/logs
-
-    # Clear the output file if it exists
-    > $output_file
-
-    # Get the diff of the main repo and append to the file
-    echo "Diff for the main repo:" >> $output_file
-    git diff --no-ext-diff --submodule=diff >> $output_file
-    echo "---------------------------------------------------" >> $output_file
-
-    # Loop through each subrepo in the 'lib' directory
-    for dir in lib/*/; do
-      if [ -d "$dir/.git" ]; then # Enter the subrepo directory and get the diff
-        echo "Diff for subrepo $dir:" >> $output_file
-        (cd "$dir" && git diff) >> $output_file
-        echo "---------------------------------------------------" >> $output_file
-      fi
-    done
-
-    echo "Git diff for main repo and subrepos has been saved to $output_file."
-    ```
-
-    </details>
+        </details>
 
 2.  Pull the latest stable release from the CanDIGv2 repo and update submodules
 
@@ -148,92 +123,10 @@ The process for updating depends on the changes contained in a particular releas
 
 9.  Run integration tests to ensure all the services are running as expected
 
-    :::note
-    If you have removed the default site admin, integration tests will not work see expandable section for instructions
-    :::
-
-    <details>
-    <summary>Running integration tests when default site admin is removed</summary>
-
-    If you revoked site admin rights from `site_admin@test.ca` you can temporarily reinstate rights to run the tests and then revoke them again
-
-    1.  To reinstate `site_admin@test.ca` as a site admin user, from the CanDIGv2 repo in a terminal, first get a token:
-
-        ```bash
-        source env.sh
-        ```
-
-        ```bash
-        CURL_OUTPUT=$(curl -s --request POST \
-        --url $KEYCLOAK_PUBLIC_URL'/auth/realms/candig/protocol/openid-connect/token' \
-        --header 'Content-Type: application/x-www-form-urlencoded' \
-        --data grant_type=password \
-        --data client_id=$CANDIG_CLIENT_ID \
-        --data client_secret=$CANDIG_CLIENT_SECRET \
-        --data username=<YOUR EMAIL ADDRESS> \
-        --data password=<YOUR PASSWORD> \
-        --data scope=openid)
-        ```
-
-        ```bash
-        export TOKEN=$(echo $CURL_OUTPUT | grep -Eo 'access_token":"[a-zA-Z0-9._\-]+' | cut -d '"' -f3)
-        ```
-
-    2.  Add the `site_admin@test.ca` back as a site admin:
-
-        ```bash
-        curl -X POST $CANDIG_URL'/ingest/site-role/admin/user_id/site_admin@test.ca' -H 'Authorization: Bearer '$TOKEN
-        ```
-
-    3.  Uncomment the default site admin lines in the `env.sh` and `.env` file
-
-        :::tip
-        If the default site admin password was deleted from `env.sh`, you can copy it from `tmp/keycloak/test-site-admin-password`
-        :::
-
-    4.  Run integration tests
-
-        ```bash
-        make test-integration
-        ```
-
-    5.  Revoke site admin rights from the default site admin
-
-        ```bash
-        curl -X DELETE $CANDIG_URL'/ingest/site-role/admin/user_id/site_admin@test.ca' -H 'Authorization: Bearer '$TOKEN
-        ```
-
-    </details>
+    In a production environment, use the make command for prod integration tests as follows:
 
     ```bash
-    make test-integration
-    ```
-
-    If tests fail, check out the [troubleshooting section](/candigv2-docs/deployment/stack-troubleshooting/) or [reach out for help](https://github.com/CanDIG/CanDIGv2/issues/new/choose).
-
-10. Reinstate federation with other nodes
-
-    Use the information in the file you created in step 1 to add all federated servers back to your deployment's federated network. You will need to contact the site admin at each node for a token to re-establish the connection. Your calls to add each server will be something along the lines of the code block below, or see the [federation README](https://github.com/CanDIG/federation_service#how-to-register-peer-servers)
-
-    ```bash
-    curl -X 'POST' $CANDIG_URL'/federation/v1/servers' \
-     -H 'Content-Type: application/json' \
-     -H 'Authorization: Bearer '$YOUR_TOKEN \
-     -d $'{ \
-      "server": { \
-        "id": "NODE1", \
-        "url": "http://www.candig-node1.ca", \
-        "location": { \
-          "name": "NODE1", \
-          "province": "ON", \
-          "province-code": "ca-on" \
-        } \
-      }, \
-      "authentication": { \
-        "issuer": "https://www.candig-node1.ca/auth/realms/candig", \
-        "token": $NODE1_TOKEN \
-      } \
-    }'
+    make test-integration-prod SITE_ADMIN_TOKEN=<token>
     ```
 
 </Steps>

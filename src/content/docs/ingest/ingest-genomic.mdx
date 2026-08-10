@@ -15,6 +15,7 @@ Genomic data cannot be ingested until the clinical data that the genomic files l
 The format of the ingest request is specified by the [`SequencingIngest`](https://github.com/CanDIG/candigv2-ingest/blob/bfa5d3dcdb987d8324e6c09de72db9316e2bb48c/ingest_openapi.yaml#L646) schema in [`candigv2-ingest`](https://github.com/CanDIG/candigv2-ingest). The schema specifies two types of objects:
 
 - **Experiments** link the sequencing centre's names with the MoHCCN clinical data's Sample Registration identifiers
+- **Runs** describe the raw sequencing runs that were performed and usually link to fastq files
 - **Analyses** describe the particular downstream analysis performed, along with the files associated with the analysis
 
 For example, a request which would ingest a sequence variation analysis would look like below. It links the clinical Sample Registration sample_registration_id_1 with a sequencing centre Experiment and associates the analysis with the pointers to a gzipped VCF file along with its associated tabix index file which are located within s3 storage:
