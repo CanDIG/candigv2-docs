@@ -40,7 +40,7 @@ A summary of what each user role can do within a deployed CanDIG site is in the 
 A `Site admin` automatically has access to read, submit and delete all data in the platform. They have special permissions to use particular endpoints that other user roles cannot access. They are also responsible for assigning roles to users and approving pending access requests. Additionally, they have the ability to 'pre-approve' users.
 
 :::danger
-A default `Site admin` is set up when the CanDIGv2 stack is first deployed, this should be changed to a real user as soon as possible if the deployment will be used for submitting real data. [See instructions here](/candigv2-docs/deployment/production#change-the-default-site-admin).
+A default `Site admin` is set up when the CanDIGv2 stack is first deployed, this should be changed to a real user as soon as possible if the deployment will be used for submitting real data. [See instructions here](/candigv2-docs/deployment/production/#change-the-default-site-admin).
 :::
 
 ## 2. Site curator
@@ -48,7 +48,7 @@ A default `Site admin` is set up when the CanDIGv2 stack is first deployed, this
 To become a `Site curator`, a `Site admin` must give a user `Site curator` privileges. Once given `Site curator` status, a user can then register, ingest and delete any program at a site. As they can register programs, they also can give [`Program curator`](#3-program-curator) and [`Team member`](#4-team-members) privileges to users. The `Site curator` role is intended to be used when there are a few dedicated curators who will be ingesting all data at a site and they are **all authorized** to see **all data** that will be ingested at that site. 
 
 :::caution
-Site curators can see and delete **all** data submitted at a CanDIG site, ensure anyone with this role has the appopriate authorization for this role.
+Site curators can see and delete **all** data submitted at a CanDIG site, ensure anyone with this role has the appropriate authorization for this role.
 :::
 
 ## 3. Program curator

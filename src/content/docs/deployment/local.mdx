@@ -235,7 +235,7 @@ VENV_OS=<your OS>
 ```
 
 :::danger
-If you are deploying a production level CanDIG deployment that will host real clinical data, see the [production deployment guide](/candigv2-docs/deployment/production) for all the settings that need to be updated to ensure the deployed platform is secure.
+If you are deploying a production level CanDIG deployment that will host real clinical data, see the [production deployment guide](/candigv2-docs/deployment/production/) for all the settings that need to be updated to ensure the deployed platform is secure.
 :::
 
 <details>
@@ -333,10 +333,10 @@ export CANDIG_NOT_ADMIN2_PASSWORD=<auto generated password>
 ```
 
 :::note
-After a fresh deployment, there will not be any data loaded into the system. The automated integration tests load in a small synthetic dataset with limited clinical and genomic data files. If you would like the data from the tests to remain in the system so that is can be explored in the data portal, ensure that the variable `KEEP_TEST_DATA` in your `.env` is set to `true`.
+After a fresh deployment, there will not be any data loaded into the system. The automated integration tests load in a small synthetic dataset with limited clinical and genomic data files. If you would like the data from the tests to remain in the system so that it can be explored in the data portal, ensure that the variable `KEEP_TEST_DATA` in your `.env` is set to `true`.
 :::
 
-Confirm your deployment was successfuly the automatic integration tests:
+Confirm your deployment was successful by running the automatic integration tests:
 
 ```bash
 make test-integration
@@ -348,7 +348,7 @@ If you want to delete the synthetic data after running these tests, use the comm
 
 If all the tests pass, well done! You have a functional CanDIG stack! 
 
-Next up, you might like to take a look at the documentation for [ingesting data](/candigv2-docs/ingest) as well as [Interacting with the stack using Make](/candigv2-docs/deployment/interact-with-the-stack). If you are looking to set up a Production node, please read through the [production deployment guide](/candigv2-docs/deployment/production).
+Next up, you might like to take a look at the documentation for [ingesting data](/candigv2-docs/ingest/) as well as [Interacting with the stack using Make](/candigv2-docs/deployment/interact-with-the-stack/). If you are looking to set up a Production node, please read through the [production deployment guide](/candigv2-docs/deployment/production/).
 
 ## Troubleshooting
 
@@ -397,7 +397,7 @@ Where `<your local IP>` is your local network IP (e.g. 192.168.x.x, or another r
 
 If the command still fails, it may be necessary to disable your local firewall, or edit it to allow requests from all ports used in the Docker stack.
 
-Edit your firewall settings to allow connections from those adresses:
+Edit your firewall settings to allow connections from those addresses:
 
 ```bash
 export DOCKER_BRIDGE_IP=$(docker network inspect bridge | grep Subnet | awk '{print $2}' | tr -d ',')

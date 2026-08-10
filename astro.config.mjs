@@ -9,11 +9,15 @@ import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
 
 import d2 from 'astro-d2';
+import remarkGfm from 'remark-gfm';
 
 // https://astro.build/config
 export default defineConfig({
     site: 'https://candig.github.io',
     base: 'candigv2-docs',
+    markdown: {
+        remarkPlugins: [remarkGfm],
+    },
     vite: {
         plugins: [tailwindcss()]
     },

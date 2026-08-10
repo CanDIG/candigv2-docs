@@ -3,7 +3,8 @@ title: Ingest genomic data
 description: How to link clinical and genomic data through ingest
 tableOfContents: true
 ---
-import { Aside } from '@astrojs/starlight/components';
+
+import { Aside } from "@astrojs/starlight/components";
 
 Now that you have a genomic JSON that is ready for ingest, it can be POSTed as a body to the `/ingest/ingest` endpoint.
 
@@ -12,8 +13,10 @@ Genomic data cannot be ingested until the clinical data that the genomic files l
 :::
 
 The format of the ingest request is specified by the [`SequencingIngest`](https://github.com/CanDIG/candigv2-ingest/blob/bfa5d3dcdb987d8324e6c09de72db9316e2bb48c/ingest_openapi.yaml#L646) schema in [`candigv2-ingest`](https://github.com/CanDIG/candigv2-ingest). The schema specifies two types of objects:
-  * Experiments link the sequencing centre's names with the MoHCCN clinical data's Sample Registration identifiers
-  * Analyses describe the particular downstream analysis performed, along with the files associated with the analysis.
+
+- **Experiments** link the sequencing centre's names with the MoHCCN clinical data's Sample Registration identifiers
+- **Runs** describe the raw sequencing runs that were performed and usually link to fastq files
+- **Analyses** describe the particular downstream analysis performed, along with the files associated with the analysis
 
 For example, a request which would ingest a sequence variation analysis would look like below. It links the clinical Sample Registration sample_registration_id_1 with a sequencing centre Experiment and associates the analysis with the pointers to a gzipped VCF file along with its associated tabix index file which are located within s3 storage:
 
@@ -30,25 +33,25 @@ For example, a request which would ingest a sequence variation analysis would lo
     }
   ],
   "runs": [
+    {
+      "program_id": "LOCAL-SYNTH_01",
+      "run_id": "RUN_0001",
+      "experiment_id": "SEQ_0001",
+      "files": [
         {
-            "program_id": "LOCAL-SYNTH_01",
-            "run_id": "RUN_0001",
-            "experiment_id": "SEQ_0001",
-            "files": [
-                {
-                    "access_method": "file:////data/RUN_0001-1.fastq",
-                    "name": "RUN_0001-1.fastq"
-                },
-                {
-                    "access_method": "file:////data/RUN_0001-2.fastq",
-                    "name": "RUN_0001-2.fastq"
-                }
-            ],
-            "metadata": {
-                "run_date": "2023-03-21",
-                "filetype": "fastq"
-            }
+          "access_method": "file:///data/RUN_0001-1.fastq",
+          "name": "RUN_0001-1.fastq"
+        },
+        {
+          "access_method": "file:///data/RUN_0001-2.fastq",
+          "name": "RUN_0001-2.fastq"
         }
+      ],
+      "metadata": {
+        "run_date": "2023-03-21",
+        "filetype": "fastq"
+      }
+    }
   ],
   "analyses": [
     {
@@ -56,16 +59,16 @@ For example, a request which would ingest a sequence variation analysis would lo
       "analysis_id": "HG00096",
       "metadata": {
         "analysis_type": "sequence_variation",
-        "reference": "hg38"
+        "reference": "hg38",
         "analysis_date": "2023-08-18"
       },
       "main": {
         "name": "string",
-        "access_method": "s3://s3.us-east-1.amazonaws.com/1000genomes/HG00096.vcf.gz"
+        "access_method": "https://endpoint_url/s3_bucket_name/HG00096.vcf.gz"
       },
       "index": {
         "name": "string",
-        "access_method": "s3://s3.us-east-1.amazonaws.com/1000genomes/HG00096.tbi"
+        "access_method": "https://endpoint_url/s3_bucket_name/HG00096.tbi"
       },
       "samples": [
         {
@@ -86,8 +89,16 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer '$TOKEN \
-  -d '@/absolute/path/to/genomic.json>
+  -d '<@/absolute/path/to/genomic.json>'
 ```
+
+:::tip
+There are a couple of optional parameters that you can specify to this endpoint:
+
+- `overwrite`: `true`/`false`, default is false. If you submit a file with genomic linkages that already exist it won't overwrite existing entries unless you specify `true` here. If a file contains both existing and new linkages, it will
+- `batch_size`: integer - specify number of objects to ingest at a time, usually not needed
+
+:::
 
 The post request should return with a queue id that can be used to check the status of ingest.
 
@@ -108,22 +119,49 @@ curl -X 'GET' \
 While ingest is processing, you will see a message `"status": "still in queue"`.
 
 :::tip
-If you get a message such as `"no such sample": "sample SAMPLE_0600 does not exist in clinical data'` this means the sample the file is linking to cannot be found in the currently ingested clinical data. Please ensure you have ingested all samples being referred to in the genomic json file before attempting ingest.
+If you get a message such as `"no such sample": "sample SAMPLE_0600 does not exist in clinical data"` this means the sample the file is linking to cannot be found in the currently ingested clinical data. Please ensure you have ingested all samples being referred to in the genomic json file before attempting ingest.
 :::
 
 ## Checking file indexing progress
 
-Ingest of the linkage between the clinical data and existence of the genomic/transcriptomic files completes fairly quickly and will be ingested into CanDIG (~7K files in about 30 mins).  However, in order to facilitate searching, variant files need to be indexed which creates hundreds of millions of database rows and is a fairly slow process (~7K files in about 6 days, or about 1K files per day). 
+Ingest of the linkage between the clinical data and existence of the genomic/transcriptomic files completes fairly quickly and will be ingested into CanDIG (~7K files in about 30 mins). However, in order to facilitate searching, variant files need to be indexed which creates hundreds of millions of database rows and is a fairly slow process (~7K files in about 6 days, or about 1K files per day).
 
 There are several ways you can monitor the indexing queue and ensure that indexing is proceeding as expected.
 
-### 1. Looking at the htsget logs
+### 1. Look at the indexer status
+
+The status of the indexer will give you a list of failed and pending files that are waiting to be indexed. The API call to view the indexer's status is:
+
+```bash
+curl --request GET \
+  --url $CANDIG_URL'/genomics/htsget/v1/indexer' \
+  --header 'Authorization: Bearer '$TOKEN \
+  --header 'Content-Type: application/json'
+```
+
+The return should be something like:
+
+```bash
+{
+  "failed": [],
+  "pending": [
+    "program1~donor1.vcf",
+    "program1~donor2.vcf",
+    "program2~donor3.vcf",
+  ],
+  "status": "ON"
+}
+
+```
+
+### 2. Looking at the htsget logs
 
 The htsget logs can be inspected when you are logged into the virtual machine where the CanDIG stack is running with the following command:
 
 ```bash
 docker logs candigv2_htsget_1 --since 30m
 ```
+
 You should be able to find messages relating to indexing that are similar to the lines below:
 
 ```bash
@@ -136,21 +174,24 @@ level: INFO, file: /app/htsget_server/htsget_server/indexing.py, log: {'message'
 level: INFO, file: /app/htsget_server/htsget_server/indexing.py, log: {'message': 'indexing local-SYNTH_01~local-multisample_2, 4 files left in indexing queue. For full list of files to index, run: `docker exec candigv2_htsget_1 ls /home/candig/tmp/indexer`'}
 ```
 
-<Aside type="tip" >
-If indexing is not proceeding as you expect, you can check your indexer status and try turning the indexer off and on again with
-```bash
-curl --request POST \
-  --url "$CANDIG_URL/genomics/htsget/v1/indexer?status=OFF" \
-  --header "Authorization: Bearer "$TOKEN
-```
-```bash
-curl --request POST \
-  --url "$CANDIG_URL/genomics/htsget/v1/indexer?status=ON" \
-  --header "Authorization: Bearer "$TOKEN
-```
-If indexing does not start, follow the steps in 2. to check your indexing queue
-</Aside>
+:::tip
+If indexing is not proceeding as you expect, you can check your indexer status
+and try turning the indexer off and on again with
 
+```bash
+curl --request POST \
+ --url $CANDIG_URL"/genomics/htsget/v1/indexer" \
+ --header "Authorization: Bearer "$TOKEN
+```
+
+```bash
+curl --request POST \
+--url "$CANDIG_URL/genomics/htsget/v1/indexer?status=ON" \
+--header "Authorization: Bearer "$TOKEN
+```
+
+If indexing does not start, follow the steps in 2. to check your indexing queue
+:::
 
 ### 2. Checking the file queue in the htsget container
 
@@ -168,8 +209,7 @@ or to simply count the files in the folder:
 docker exec candigv2_htsget_1 ls ../../home/candig/tmp/indexer | wc -l
 ```
 
-
-## 3. Checking a program's indexing status
+### 3. Checking a program's indexing status
 
 You can check the overall progress of all files on a program-by-program basis using the following call:
 
@@ -183,8 +223,8 @@ And you will get a response back like:
 
 ```bash
 curl --request GET \
-  --url http://candig.docker.internal:5080/drs/ga4gh/drs/v1/programs/local-SYNTH_01/status \
-  --header 'Authorization: Bearer TOKEN'
+  --url $CANDIG_URL'/drs/ga4gh/drs/v1/programs/local-SYNTH_01/status' \
+  --header 'Authorization: Bearer '$TOKEN
 {
 	"index_complete": [
 		"drs://candig.docker.internal:5080/drs/local-test",
