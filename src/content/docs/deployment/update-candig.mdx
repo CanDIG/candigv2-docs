@@ -79,10 +79,12 @@ The process for updating depends on the changes contained in a particular releas
 
     ```bash
     cp .env .env-bak
-    cp etc/env/example-production.env .env
+    make migrate-env
     ```
 
-    Use the backed up copy to enter any deployment specific information
+    The make target will copy the existing values to the newly formatted env file.
+
+    :::
 
     :::tip
     You can use a file comparison tool or use the bash `diff` command to see any changes between the two files
