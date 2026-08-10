@@ -90,20 +90,27 @@ export default defineConfig({
             {
                 label: 'Deploy',
                 link: '/deployment/local/',
+                icon: 'rocket',
                 items: [
-                    { label: 'Local deployment', slug: 'deployment/local' },
-                    { label: 'Production deployment', slug: 'deployment/production' },
-                    { label: 'Testing', slug: 'deployment/ingest-and-test' },
-                    { label: 'Interact using Make', slug: 'deployment/interact-with-the-stack' },
-                    { label: 'Logging', slug: 'deployment/logging' },
-                    { label: 'Back up/Restore', slug: 'deployment/backup-restore-candig' },
-                    { label: 'Troubleshooting', slug: 'deployment/stack-troubleshooting' },
-                    { label: 'Update CanDIG', slug: 'deployment/update-candig' },
+                    {
+                        label: 'Deployment',
+                        items: [
+                                { label: 'Local deployment', slug: 'deployment/local' },
+                                { label: 'Production deployment', slug: 'deployment/production' },
+                                { label: 'Testing', slug: 'deployment/ingest-and-test' },
+                                { label: 'Interact using Make', slug: 'deployment/interact-with-the-stack' },
+                                { label: 'Logging', slug: 'deployment/logging' },
+                                { label: 'Back up/Restore', slug: 'deployment/backup-restore-candig' },
+                                { label: 'Troubleshooting', slug: 'deployment/stack-troubleshooting' },
+                                { label: 'Update CanDIG', slug: 'deployment/update-candig' },
+                        ]
+                    }
                 ],
             },
             {
                 label: 'Submit',
                 link: '/ingest/',
+                icon: 'add-document',
                 items: [
                     {
                         label: 'Data submission steps',
@@ -121,16 +128,23 @@ export default defineConfig({
             {
                 label: 'User Roles',
                 link: '/user-roles/',
+                icon: 'padlock',
                 items: [
-                    { label: 'Roles Overview', slug: 'user-roles/roles-overview' },
-                    { label: 'Assign user roles', slug: 'user-roles/assign-roles' },
-                    { label: 'DAC Authorization', slug: 'user-roles/dac-authorization' },
-                    { label: 'User Notifications', slug: 'user-roles/user-notifications' },
-                ],
+                    {
+                        label: 'User Roles',
+                        items: [
+                                { label: 'Roles Overview', slug: 'user-roles/roles-overview' },
+                                { label: 'Assign user roles', slug: 'user-roles/assign-roles' },
+                                {label: 'DAC Authorization', slug: 'user-roles/dac-authorization' },
+                                { label: 'User Notifications', slug: 'user-roles/user-notifications' },
+                        ],
+                    }       
+                ]
             },
             {
                 label: 'Explore',
                 link: '/explore/',
+                icon: 'magnifier',
                 items: [
                     {
                         label: 'Exploring data on the portal',
@@ -145,12 +159,18 @@ export default defineConfig({
             {
                 label: 'Technical',
                 link: '/technical/',
+                icon: 'setting',
                 items: [
-                    { label: 'Architecture', slug: 'technical/architecture' },
-                    { label: 'Docker and submods', slug: 'technical/docker-and-submodules' },
-                    { label: 'API docs', slug: 'technical/api-docs' },
-                    ...openAPISidebarGroups,
-                ],
+                    {
+                        label: 'Technical Docs',
+                        items: [
+                            { label: 'Architecture', slug: 'technical/architecture' },
+                            { label: 'Docker and submods', slug: 'technical/docker-and-submodules' },
+                            { label: 'API docs', slug: 'technical/api-docs' },
+                            ...openAPISidebarGroups,
+                    ]
+                }
+                ]
             },
         ]),
     ],
