@@ -3,4 +3,10 @@ title: Completeness in CanDIG
 description: Explanation of completeness in CanDIG
 ---
 
-Explanation coming soon!
+The completeness graphs included on the 'Completeness Stats' page aim to give researchers an idea of the quality of ingested data before they apply for full access to programs.
+
+A donor is counted as 'complete' in the clinical graph if they meet all requirements of the current clinical data model. This calculation does not count 'Not available' values as complete and does not assess the types of samples ingested per donor (i.e. Normal/Tumour sample types).
+
+The Complete Genomic graph counts the number of Sample Registrations per node, per program that are linked to a genome (VCF/BAM/CRAM) or transcriptome (expression matrix) file.
+
+Field level statistics show the percentage of donors that have a valid value for that field(excl. Not available). A user can choose to filter by specific programs they are interested in to check whether a program has enough clinical data to be useful to their research.

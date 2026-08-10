@@ -7,6 +7,12 @@ tableOfContents:
 next: false
 ---
 
+## We have a set of helper scripts that may be useful to your issues
+
+Check out the helper scripts in the [ingest repo](https://github.com/CanDIG/candigv2-ingest/tree/develop/helper_scripts) to see if they may be useful for the issue you are facing.
+
+Let us know if you have ideas or your own scripts that you think would be useful to others in the CanDIG network!
+
 ## What if Clinical data Validation is failing?
 
 If validation fails, it is important to fix the issues. The validation should give an error message that gives you enough information to fix the problem. If you are still struggling then [reach out the CanDIG team](https://github.com/CanDIG/candigv2-ingest/issues/new/choose) and provide the error message so that we can try to help you. If all else fails, it is possible to ingest without the failing values and reingest the data with valid values at a later point.
@@ -33,19 +39,19 @@ Genomic ingest will fail if you attempt to ingest genomic data that links to Sam
 
 ## What if I want to link my objects differently?
 
- Currently it isn’t possible to link the objects in the data model differently so you will need to transform your data into a compatible structure to match the CanDIG MoHCCN data model.
+Currently it isn’t possible to link the objects in the data model differently so you will need to transform your data into a compatible structure to match the CanDIG MoHCCN data model.
 
 ## Errors when ingesting data
 
- If you receive a 504 error or Gateway timeout something like this:
+If you receive a 504 error or Gateway timeout something like this:
 
- ```bash
+```bash
 {'errors': ["sample_registrations: \nREQUEST STATUS CODE: 504 \nRETURN MESSAGE: <html><body><h1>504 Gateway Time-out</h1>\nThe server didn't respond in time.\n</body></html>\n\n", "treatments: \nREQUEST STATUS CODE: 504 \nRETURN MESSAGE: <html><body><h1>504 Gateway Time-out</h1>\nThe server didn't respond in time.\n</body></html>\n\n", "systemic_therapies: \nREQUEST STATUS CODE: 504 \nRETURN MESSAGE: <html><body><h1>504 Gateway Time-out</h1>\nThe server didn't respond in time.\n</body></html>\n\n"], 'results': ['Of 1 programs, 1 were created', 'Of 284 donors, 284 were created', 'Of 237 primary_diagnoses, 237 were created', 'Of 524
 specimens, 524 were created', 'Of 169 systemic_therapies, 169 were created', 'Of 134 radiations, 134 were created']} 201
 {
 "YOUR_PROGRAM_ID": {
-    "errors": [
-        "sample_registrations: \nREQUEST STATUS CODE: 504 \nRETURN MESSAGE: <html><body><h1>504 Gateway Time-out</h1>\nThe server didn't respond in time.\n</body></html>\n\n", "treatments: \nREQUEST STATUS CODE: 504 \nRETURN MESSAGE: <html><body><h1>504 Gateway Time-out</h1>\nThe server didn't respond in time.\n</body></html>\n\n", "systemic_therapies: \nREQUEST STATUS CODE: 504 \nRETURN MESSAGE: <html><body><h1>504 Gateway Time-out</h1>\nThe server didn't respond in time.\n</body></html>\n\n"
+   "errors": [
+       "sample_registrations: \nREQUEST STATUS CODE: 504 \nRETURN MESSAGE: <html><body><h1>504 Gateway Time-out</h1>\nThe server didn't respond in time.\n</body></html>\n\n", "treatments: \nREQUEST STATUS CODE: 504 \nRETURN MESSAGE: <html><body><h1>504 Gateway Time-out</h1>\nThe server didn't respond in time.\n</body></html>\n\n", "systemic_therapies: \nREQUEST STATUS CODE: 504 \nRETURN MESSAGE: <html><body><h1>504 Gateway Time-out</h1>\nThe server didn't respond in time.\n</body></html>\n\n"
 ]}}
 ```
 
@@ -64,7 +70,7 @@ It is likely that the token you are trying to use has expired. Try getting a fre
 If you receive a file not found error something like this:
 
 ```bash
-"<Your_analysis_ID": {
+"<Your_analysis_ID>": {
         "errors": "{\n \"message\": \"No file exists at /the/path/you/provided/as/access/method/analysis_name.bam.bai on the server.\"\n}\n"
     },
 ```
@@ -82,7 +88,6 @@ docker exec ls -l /the/path/you/provided/as/access/method/
 ```
 
 If you are ingesting VCF files, they take some time to be indexed. This happens after ingest is complete. Searching by variants in the data portal is not possible until indexing is complete. If you would like to check the indexing status of a particular file, use the htsget endpoint
-
 
 ## Key not authorised error when ingesting genomic files
 
@@ -102,13 +107,13 @@ Currently, there is no way to edit data that is already ingested into CanDIG. To
 
 ### A. Deleting Clinical Data
 
-First, you’ll need need to get a authentication token to delete the data from calling this command:
+First, you’ll need to get an authentication token to delete the data by calling this command:
 
 1. Get a token by logging into the candig data portal as Site admin and copying the API token.
 
    a. Go to the icon in the top right of the screen and click the cog
 
-   b. Click ‘ *** Get API Token’
+   b. Click ‘ \*\*\* Get API Token’
 
    c. Click the token to copy the text
 
@@ -122,7 +127,7 @@ TOKEN=ey-pasted-jwt
 This token should be kept secure, it lasts for 30 mins
 :::
 
-   Once you get the token, call this command:
+Once you get the token, call this command:
 
 ```bash
 curl --request DELETE \
@@ -132,17 +137,21 @@ curl --request DELETE \
 -H 'Authorization: Bearer '$TOKEN
 ```
 
-   Remember to replace `PROGRAM_ID` and `CANDIG_URL` with the actual values for your program and deployment.
+Remember to replace `PROGRAM_ID` and `CANDIG_URL` with the actual values for your program and deployment.
+
+:::tip
+If you'd like to delete multiple programs at once, check out the helper script [delete_clinical_data_katsu.py](https://github.com/CanDIG/candigv2-ingest/blob/develop/helper_scripts/delete_clinical_data_katsu.py) within the helper scripts directory in the candigv2-ingest repo.
+:::
 
 ### B. Genomic Data
 
-First, you’ll need need to get a authentication token to delete the data from calling this command:
+First, you’ll need to get an authentication token to delete the data by calling this command:
 
 1. Get a token by logging into the candig data portal as Site admin and copying the API token.
 
    a. Go to the icon in the top right of the screen and click the cog
 
-   b. Click ‘ *** Get API Token’
+   b. Click ‘ \*\*\* Get API Token’
 
    c. Click the token to copy the text
 
@@ -180,3 +189,24 @@ When attempting clinical data ingest into katsu, if you get a response such as b
 ```
 
 It means you have not yet registered your program before ingesting. Please follow the instructions in [Register Programs](/candigv2-docs/ingest/register-programs/) to submit a program authorization before attempting clinical ingest again.
+
+## How to find and index unindexed files at your node
+
+Sometimes the indexer may fail, leaving your sequencing files in a state where some have indexed successfully and some have not. To find and index unindexed files on your system, use the [`index_unindexed.sh`](https://github.com/CanDIG/candigv2-ingest/blob/develop/helper_scripts/index_unindexed.sh) helper script. This script identifies all unindexed files and outputs a text file with all the curl commands needed to index all unindexed files.
+
+## How to assign sequencing objects to a different program
+
+In the course of reingesting data, it is possible for sequencing file objects to become out of sync with clinical data and which program they are assigned to. For example, if a program is split betweenn releaseable and non-releaseable data. While reingesting clinical data is fairly fast, if a submitter doesn't want to resubmit and reindex genomic files, they can use some helper scripts to re-assign the program for specific objects.
+
+1. First, make a call to the `drs/biosamples` endpoint that filters results to the experiments and linked object you want to re-assign and save the result to a text file
+2. Use this text file as input to the [`extract_drs.py`](https://github.com/CanDIG/candigv2-ingest/blob/develop/helper_scripts/extract_drs.py) helper script
+3. Create a csv file with the columns `Submitter Sample ID` and `Program ID` that contains the correct mappings of sample ID to program
+4. Use the [`reset_programs.py`](https://github.com/CanDIG/candigv2-ingest/blob/develop/helper_scripts/reset_programs.py) helper script with the csv file and the output from `extract_drs.py` to reassign the objects to the correct programs
+
+## How to check the verified status of your ingested sequencing files
+
+It is possible that linkages to ingested sequencing files may become stale over time. To check the verification status of your ingested sequencing files, use the [`verified_analyses.py`](https://github.com/CanDIG/candigv2-ingest/tree/develop/helper_scripts) helper script
+
+## How to make sure the sequencing files you expected are actually properly ingested
+
+Sometimes it is difficult to tell whether the ingest you performed actually ingested all the sequencing files you expected. The helper script [`get_ingested_files.py`](https://github.com/CanDIG/candigv2-ingest/blob/develop/helper_scripts/get_ingested_files.py) gives a summary of all the ingested sequencing files at your node.
