@@ -10,3 +10,20 @@
     --sl-text-3xl:1.33rem;
     --sl-text-2xl:1.25rem;
 }
+
+/* Cap the first column of the production .env settings table at half the
+   width and let the long code values wrap instead of forcing it wider. */
+.env-settings-table table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.env-settings-table th:first-child,
+.env-settings-table td:first-child {
+    width: 50%;
+}
+
+.env-settings-table td:first-child code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
