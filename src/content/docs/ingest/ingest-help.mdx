@@ -196,7 +196,7 @@ Sometimes the indexer may fail, leaving your sequencing files in a state where s
 
 ## How to assign sequencing objects to a different program
 
-In the course of reingesting data, it is possible for sequencing file objects to become out of sync with clinical data and which program they are assigned to. For example, if a program is split betweenn releaseable and non-releaseable data. While reingesting clinical data is fairly fast, if a submitter doesn't want to resubmit and reindex genomic files, they can use some helper scripts to re-assign the program for specific objects.
+In the course of reingesting data, it is possible for sequencing file objects to become out of sync with clinical data and which program they are assigned to. For example, if a program is split between releaseable and non-releaseable data. While reingesting clinical data is fairly fast, if a submitter doesn't want to resubmit and reindex genomic files, they can use some helper scripts to re-assign the program for specific objects.
 
 1. First, make a call to the `drs/biosamples` endpoint that filters results to the experiments and linked object you want to re-assign and save the result to a text file
 2. Use this text file as input to the [`extract_drs.py`](https://github.com/CanDIG/candigv2-ingest/blob/develop/helper_scripts/extract_drs.py) helper script
