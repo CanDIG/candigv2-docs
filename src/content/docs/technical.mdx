@@ -1,23 +1,28 @@
 ---
 title: Technical Docs landing page
 description: Detailed technical docs for developers and API users
-template: splash
-tableOfContents:
-  minHeadingLevel: 1
-  maxHeadingLevel: 2
+tableOfContents: false
 prev: false
 next: false
 ---
 
-import { Icon } from 'astro-icon/components';
-import { Steps } from '@astrojs/starlight/components';
+import { Icon } from "astro-icon/components";
+import { Steps } from "@astrojs/starlight/components";
 
-import { LinkCard, Card, CardGrid } from '@astrojs/starlight/components';
+import { LinkCard, Card, CardGrid } from "@astrojs/starlight/components";
 
 <CardGrid stagger>
-	<LinkCard 
-		title="CanDIG Architecture" 
-		href="/candigv2-docs/technical/architecture"
-		description="Prepare your clinical data for ingest"
-	/>
+  <LinkCard
+    title="CanDIG Architecture"
+    href="/candigv2-docs/technical/architecture/"
+    description="View technical documentation"
+  />
+</CardGrid>
+
+<CardGrid stagger>
+  <LinkCard
+    title="CanDIG API documentation"
+    href="/candigv2-docs/technical/api-docs/"
+    description="View API docs"
+  />
 </CardGrid>
