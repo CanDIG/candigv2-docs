@@ -1,7 +1,0 @@
-/* Include the "starlight" layer alongside Tailwind’s default layers. */
-@layer base, starlight, theme, components, utilities;
-
-/* Import Starlight’s compatibility styles. */
-@import '@astrojs/starlight-tailwind';
-@import 'tailwindcss/theme.css' layer(theme);
-@import 'tailwindcss/utilities.css' layer(utilities);

@@ -3,7 +3,7 @@ title: Logging
 description: Information about logging in CanDIG
 ---
 
-We use Docker’s [fluentd](https://www.fluentd.org/) plugin to direct all logs to a single container running fluentd. This container is defined in `candigv2-docs/lib/logging`. All of the services are configured to send their logs to the fluentd service.
+We use Docker’s [fluentd](https://www.fluentd.org/) plugin to direct all logs to a single container running fluentd. This container is defined in `CanDIGv2/lib/logging`. All of the services are configured to send their logs to the fluentd service.
 
 The fluentd container is configured to send its output to a file, located in `CanDIGv2/tmp/logs`. The active log file is named `buffer.*.log`, while the daily logs are rotated out to files named by date, e.g. `.20240817_0.log`.
 

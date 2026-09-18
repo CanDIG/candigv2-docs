@@ -6,7 +6,7 @@ next: false
 
 ## Integration tests failing
 
-If any integration tests fail, it is usually best to go back to the first test that failed, as subesquent tests often rely on earlier tests passing to succeed. Therefore the root cause is usually with the first failure.
+If any integration tests fail, it is usually best to go back to the first test that failed, as subsequent tests often rely on earlier tests passing to succeed. Therefore the root cause is usually with the first failure.
 
 If `test_tyk` fails, all other tests will fail because the stack relies on tyk being up and running as expected. If you see `test_tyk` fail, you may as well `ctrl+c` to stop the tests running and start investigating the issue with tyk. Some places to start looking for the issue are:
 
@@ -164,12 +164,16 @@ If you need more than one hosts entry for this, you can edit the `extra_hosts` e
 
 ## CanDIG performance (especially Vault/Tyk authorization) becomes unstable
 
-It is possible that the Vault audit log is getting too large. You can check the sizes of your Docker volumes with `docker system df -v`. If the `vault-data` volume is over 1GB in size, this is possibly the problem.
+For CanDIGv2 versions before v8, it is possible that the Vault audit log is getting too large. You can check the sizes of your Docker volumes with `docker system df -v`. If the `vault-data` volume is over 1GB in size, this is possibly the problem.
 
 We enabled the Vault audit log by default, but most authorization requests are logged in the Fluentd log, so the internal Vault log is redundant.
 
 If this happens, truncate the vault-audit log file:
+
 ```bash
 docker exec candigv2_vault-runner_1 bash -c "tail /vault/vault-audit.log > /vault/vault-audit.log"
 ```
+
 You can also try [backing up and restoring](https://candig.github.io/candigv2-docs/deployment/backup-restore-candig/#backing-up-secrets-and-authorization-data) your Vault containers.
+
+From CanDIGv2 v8.0.0 onwards, the vault audit log was no longer written to disk so this should no longer be an issue. Included here for nodes that are yet to update.

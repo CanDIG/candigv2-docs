@@ -11,7 +11,7 @@ If you have gotten this far, well done! Most of the hard work is done (hopefully
 
 Assuming that you have a configured ingest instance up and running and have access to a user with Site curator or Program curator credentials, you should be able to run through the instructions below.
 
-It is preferable to attempt ingest using the API call. The API is described in ingest_openapi.md or can be explored using a swagger ui.
+Ingest is completed through the use of an API call which we describe step-by-step later. The API is described in [ingest_openapi.yaml](https://github.com/CanDIG/candigv2-ingest/blob/stable/ingest_openapi.yaml) or can be explored in detail on this website's [technical section](https://candig.github.io/candigv2-docs/technical/ingest-api/operations/ingest_operationsget_service_info/) as well as using a [swagger ui](https://editor.swagger.io/?url=https://raw.githubusercontent.com/CanDIG/candigv2-ingest/develop/ingest_openapi.yaml) depending on your preferences.
 
 ## Ingesting clinical data into CanDIG
 
@@ -19,11 +19,11 @@ Before you can use the ingest endpoint, you will need an authorized bearer token
 
 1. Get a token by logging into the candig data portal as Site admin and copying the API token.
 
-    a. Go to the icon in the top right of the screen and click the cog
+   a. Go to the icon in the top right of the screen and click the cog
 
-    b. Click ‘ *** Get API Token’
+   b. Click ‘ \*\*\* Get API Token’
 
-     c. Click the token to copy the text
+   c. Click the token to copy the text
 
 2. Open a terminal and save it into a variable called TOKEN
 
@@ -45,7 +45,7 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer '$TOKEN \
-  -d '@/absolute/path/to/dir_name_map.json>
+  -d '<@/absolute/path/to/dir_name_map.json>'
 ```
 
 If ingest worked correctly, you should get a response from the API giving you your queue_id to check the status of your ingest:
@@ -91,4 +91,4 @@ Example response from the status endpoint when ingest for a program is complete:
 }
 ```
 
-Once you have successfully ingested all your clinical data, you can proceed with ingesting your genomic files and linking them the the ingested Sample Registration objects.
+Once you have successfully ingested all your clinical data, you can proceed with ingesting your genomic files and linking them to the ingested Sample Registration objects.

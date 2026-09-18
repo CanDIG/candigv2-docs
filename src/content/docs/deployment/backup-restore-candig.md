@@ -4,142 +4,66 @@ description: Guide to backing up and restoring data stored in CanDIG
 ---
 
 There are three kinds of data stored in CanDIG that we recommend backing up regularly.
-1. Clinical and Genomic metadata stored in CanDIGs's postgres databases
-2. Authorization data stored in vault that details user's authorization to access/edit ingested data
+
+1. Clinical and Genomic metadata stored in CanDIG's postgres databases
+2. Authorization data stored in vault that details user's authorization to access/edit ingested data as well as the connection information for other nodes in the CanDIG network.
 3. Logs
 
-For data types 1 and 2, we recommend taking back ups after each ingest event and to store one or more copies of your backups on a separate secure server from your CanDIG installation. We also recommend encrypting your backup so that it cannot be accessed by an unauthorizaed user.
+For data types 1 and 2, we recommend taking back ups after each ingest event and to store one or more copies of your backups on a separate secure server from your CanDIG installation. We also recommend encrypting your backup so that it cannot be accessed by an unauthorized user.
 
 Logs can be backed up on a regular schedule and at a minimum, should be saved elsewhere when performing a rebuild of the stack.
 
 ## Backing up postgres databases
 
-Both clinical and genomic metadata are stored within databases running in the postgres container `postgres-db`. 
-
-The commands below assume that you are connected to the machine that is hosting the dockerized CanDIGv2 stack.
-
-To backup the data stored in these databases:
-
-1. Open an interactive terminal inside the running postgres docker container with:
+Backups of the postgres databases can be created by running the `make backup-all-postgres` command. These will be created in the location specified by the value `BACKUP_LOCATION` in your `.env` file.
 
 ```bash
-docker exec -it candigv2_postgres-db_1 bash
+make backup-all-postgres
 ```
 
-1. Dump contents of the three databases to files. `-d` specifies the database to dump, `-f` specifies the filename. Below we use the date and the name of the database being backed up:
-
-```bash
-pg_dump -U admin -d genomic -f yyyy-mm-dd-genomic-backup.sql
-pg_dump -U admin -d clinical -f yyyy-mm-dd-clinical-backup.sql
-pg_dump -U admin -d drs -f yyyy-mm-dd-drs-backup.sql
-pg_dump -U admin -d rnaget_db -f yyyy-mm-dd-rnaget-backup.sql
-```
-
-You should then have three files, each with a complete copy of each of the databases. 
-
-You can now exit the container by entering
-
-```bash
-exit
-```
-
-You should copy these to a secure location outside of the running container and consider encrypting them or otherwise ensuring that unauthorized users will not have access to the information. To copy from the container on to the docker host, you can use a command similar to: 
-
-```bash
-docker cp candigv2_postgres-db_1:yyyy-mm-dd-genomic-backup.sql /desired/path/target
-docker cp candigv2_postgres-db_1:yyyy-mm-dd-clinical-backup.sql /desired/path/target
-docker cp candigv2_postgres-db_1:yyyy-mm-dd-drs-backup.sql /desired/path/target
-docker cp candigv2_postgres-db_1:yyyy-mm-dd-rnaget-backup.sql /desired/path/target
-```
+You should copy these from `$BACKUP_LOCATION` to a secure location and consider encrypting them or otherwise ensuring that unauthorized users will not have access to the information.
 
 ## Restoring postgres databases
 
-To restore the databases that we have backed up, assuming you have the CanDIG stack up and running 
+You can restore the postgres databases using make commands as well. However, because the files in question can be very large and because overwriting the existing data can be very consequential, we have implemented a slightly more complex procedure.
 
-1. Stop the running katsu and htsget containers which are connected to the databases
+There are currently four CanDIG modules that use postgres databases; these can be found in the `CANDIG_DB_MODULES` value in your `.env` file. They correspond to the following locations in your CanDIGv2 repo:
 
-```bash
-docker stop candigv2_katsu_1
-docker stop candigv2_htsget_1
-docker stop candigv2_drs_1
-docker stop candigv2_rnaget_1
-```
+| Module | Database name | Directory location |
+| ------ | ------------- | ------------------ |
+| drs    | drs           | lib/drs            |
+| htsget | genomic       | lib/htsget         |
+| katsu  | clinical      | lib/katsu          |
+| rnaget | rnaget_db     | lib/rnaget         |
 
-1. Then we need to copy the `sql` backup files into the running postgres container
+To restore each of these databases:
 
-```bash
-docker cp /path/to/backup/yyyy-mm-dd-genomic-backup.sql candigv2_postgres-db_1:/yyyy-mm-dd-genomic-backup.sql
-docker cp /path/to/backup/yyyy-mm-dd-clinical-backup.sql candigv2_postgres-db_1:/yyyy-mm-dd-clinical-backup.sql
-docker cp /path/to/backup/yyyy-mm-dd-genomic-backup.sql candigv2_postgres-db_1:/yyyy-mm-dd-rnaget-backup.sql
-docker cp /path/to/backup/yyyy-mm-dd-drs-backup.sql candigv2_postgres-db_1:/yyyy-mm-dd-drs-backup.sql
-```
+1.  The backup file to be restored must be de-encrypted and expanded into a `.sql` file.
+2.  Create a file called `restore.txt` in the module's directory location, e.g. `lib/drs/restore.txt`.
+3.  The `restore.txt` file should contain the full path of the location of the backup file.
 
-Next we need to delete the initialized databases so we can replace them with the backed up versions. 
-
-1. Open an interactive terminal to the postgres container
-
-```bash
-docker exec -it candigv2_postgres-db_1 bash
-```
-
-1. Then connect to the psql commandline prompt with a database other than the ones we want to drop:
-
-```bash
-psql -U admin -d template1
-```
-
-1. Then drop the two existing databases, create empty replacement databases then quit the psql commandline prompt
-
-```bash
-DROP DATABASE clinical;
-CREATE DATABASE clinical;
-DROP DATABASE genomic;
-CREATE DATABASE genomic;
-DROP DATABASE drs;
-CREATE DATABASE drs;
-DROP DATABASE rnaget-db;
-CREATE DATABASE rnaget-db;
-\q
-```
-
-1. Load the backed up copies from file with these commands:
-
-```bash
-psql -U admin -d clinical < yyyy-mm-dd-clinical-backup.sql
-psql -U admin -d genomic < yyyy-mm-dd-genomic-backup.sql
-psql -U admin -d rnaget-db < yyyy-mm-dd-rnaget-backup.sql
-psql -U admin -d drs < yyyy-mm-dd-rnaget-backup.sql
-```
-
-1. Exit the interactive terminal with the `exit` command.
-
-1. Restart the katsu,htsget, drs and rnaget services
-
-```bash
-docker start candigv2_katsu_1
-docker start candigv2_htsget_1
-docker start candigv2_drs_1
-docker start candigv2_rnaget_1
-```
+You can either run `make restore-postgres-<module>` to restore an individual database prepared in this way, or run `make restore-all-postgres` to restore all databases prepared in this way.
 
 You should be able to see the restored data in the data portal.
 
 :::tip
-If restoring data after updating to a new version of the stack or micoservive (particularly katsu), it is possible that the data that is restored back to the database will be invalid against the updated version. This may not be immediately obvious but will cause errors in the data portal attempts to retrieve data with invalid values. We don't currently have a great way for you to check if your data is valid against the latest stack but some options are:
+If restoring data after updating to a new version of the stack or microservice (particularly katsu), it is possible that the data that is restored back to the database will be invalid against the updated version. This may not be immediately obvious but will cause errors in the data portal attempts to retrieve data with invalid values. We don't currently have a great way for you to check if your data is valid against the latest stack but some options are:
+
 - Pay attention to the [MoHCCN data model changes](https://www.marathonofhopecancercentres.ca/researcher-hub/policies-and-guidelines) and be aware if the data in your system is affected by any updates
 - Retain the `map.json`s that were used for ingest and run them through the script [validate_coverage.py](https://github.com/CanDIG/clinical_ETL_code/blob/develop/src/clinical_etl/validate_coverage.py) to check for any new validation errors and warnings
 
 Depending on your comfort levels, to update your data to be compatible with the running version of the stack, you may want to:
+
 - Use SQL to update tables/values directly in the katsu postgresql database
 - Search/Replace values or create scripts to update the `map.json`s to be compatible with the latest model and reingest the updated data
 - Perform a full clinical_etl process by updating csvs and mapping template
-:::
+  :::
 
 ## Backing up Secrets and Authorization data
 
 Secrets and Authorization data in CanDIG are stored within Vault. These should be backed up regularly so that they can be restored should there be a system crash and before the CanDIG stack is rebuilt. To back up Vault, run the command:
 
-```bash
+```
 make backup-vault
 ```
 
@@ -147,13 +71,13 @@ This command creates a tar ball at `tmp/vault/backup.tar.gz`. This should be sav
 
 To restore the vault backup, copy the backup tarball into the vault directory in the CanDIG stack and rename it to `restore.tar.gz`:
 
-```bash
-cp /path/to/backup.tar.gz path/to/candigv2-docs/lib/vault/restore.tar.gz
+```
+cp /path/to/backup.tar.gz path/to/CanDIGv2/lib/vault/restore.tar.gz
 ```
 
 Then run
 
-```bash
+```
 make restore-vault
 ```
 
@@ -162,8 +86,3 @@ All previous secrets and authorizations should be restored to the stack. The tar
 ## Backing up logs
 
 Logs are stored in `tmp/logs`. The contents of this folder should be saved periodically.
-
-:::caution
-Logs can get very large and take up a lot of space on your system, we recommend you set up a cron job or otherwise regularly compress and backup logs to ensure your server doesn't run out of space
-:::
-
