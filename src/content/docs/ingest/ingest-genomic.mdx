@@ -179,7 +179,7 @@ If indexing is not proceeding as you expect, you can check your indexer status
 and try turning the indexer off and on again with
 
 ```bash
-curl --request POST \
+curl --request GET \
  --url $CANDIG_URL"/genomics/htsget/v1/indexer" \
  --header "Authorization: Bearer "$TOKEN
 ```
