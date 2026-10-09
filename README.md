@@ -8,9 +8,13 @@ Website is deployed from the Stable branch and should be up to date with changes
 
 We try to update docs inline with current development on the `develop` branch. They can be viewed in the `src/content/docs/` folder in markdown format, but not all nice ux features are properly displayed.
 
+# Setup
+
+From the repo directory, install d2 using the [install script](https://d2lang.com/tour/install/).
+
 You can run a develop version of the docs website following the commands after checking out branch you are interested in building:
 
-```
+```bash
 npm install
 npm run dev
 ```
